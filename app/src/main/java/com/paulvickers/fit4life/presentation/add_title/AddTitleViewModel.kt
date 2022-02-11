@@ -22,7 +22,6 @@ class AddTitleViewModel @Inject constructor(
 
     private val _workoutTitleState = mutableStateOf(
         WorkoutTitleTextFieldState(
-            hint = "Enter workout title"
         )
     )
     val workoutTitleState: State<WorkoutTitleTextFieldState> = _workoutTitleState
@@ -41,7 +40,6 @@ class AddTitleViewModel @Inject constructor(
                             currentWorkoutTitleId = WorkoutTitle.id
                             _workoutTitleState.value = workoutTitleState.value.copy(
                                 text = WorkoutTitle.title,
-                                isHintVisible = false,
                                 isAdd = false
                             )
                         }
@@ -52,17 +50,12 @@ class AddTitleViewModel @Inject constructor(
 
     sealed class UiEvent {
         data class ShowSnackbar(val message: String) : UiEvent()
-        object SaveWorkoutTitle : UiEvent()
+        object InsertWorkoutTitle : UiEvent()
         object UpdateWorkoutTitle : UiEvent()
     }
 
     fun onEvent(event: AddWorkoutTitleEvent) {
         when (event) {
-            is AddWorkoutTitleEvent.ChangeTitleFocus ->
-                _workoutTitleState.value = workoutTitleState.value.copy(
-                    isHintVisible = !event.focusState.isFocused &&
-                            workoutTitleState.value.text.isBlank()
-                )
             is AddWorkoutTitleEvent.EnteredTitle ->
                 _workoutTitleState.value = workoutTitleState.value.copy(
                     text = event.value
@@ -76,7 +69,7 @@ class AddTitleViewModel @Inject constructor(
                                 id = currentWorkoutTitleId
                             )
                         )
-                        _eventFlow.emit(UiEvent.SaveWorkoutTitle)
+                        _eventFlow.emit(UiEvent.InsertWorkoutTitle)
                     } catch (e: InvalidWorkoutTitleException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
