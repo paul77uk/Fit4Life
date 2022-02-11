@@ -1,6 +1,5 @@
-package com.paulvickers.fit4life.domain.use_case
+package com.paulvickers.fit4life.domain.use_case.workout_title_usecases
 
-import com.paulvickers.fit4life.data.relations.WorkoutWithDays
 import com.paulvickers.fit4life.domain.model.WorkoutTitle
 import com.paulvickers.fit4life.domain.repository.WorkoutTitleRepository
 import kotlinx.coroutines.flow.Flow

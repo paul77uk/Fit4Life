@@ -14,22 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.paulvickers.fit4life.presentation.workout_titles.WorkoutTitleViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutDayScreen(navController: NavController) {
-//    val viewModel: WorkoutDayViewModel = hiltViewModel()
-//    val workoutDays = viewModel.workoutDays.collectAsState().value
-    val argument = navController.currentBackStackEntry?.arguments?.getString("workoutTitle")
     val viewModel: WorkoutDayViewModel = hiltViewModel()
     val workoutDays = viewModel.workoutDays.collectAsState().value
+    val workoutTitle = navController.currentBackStackEntry?.arguments?.getString("workoutTitle")
     Scaffold(
         topBar = {
             TopAppBar(content = {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = argument ?: "",
+                    text = workoutTitle ?: "",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h6,
                 )

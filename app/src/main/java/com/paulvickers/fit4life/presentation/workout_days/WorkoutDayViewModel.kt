@@ -1,12 +1,8 @@
 package com.paulvickers.fit4life.presentation.workout_days
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paulvickers.fit4life.data.relations.WorkoutWithDays
 import com.paulvickers.fit4life.domain.model.WorkoutDay
 import com.paulvickers.fit4life.domain.use_case.GetDaysOfWorkoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +30,6 @@ class WorkoutDayViewModel @Inject constructor(
                         .distinctUntilChanged()
                         .collect {
                             _workoutDays.value = it
-                            Log.d("TAG", _workoutDays.value.toString())
                         }
                 }
             }

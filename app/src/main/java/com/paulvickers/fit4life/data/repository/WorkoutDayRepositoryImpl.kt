@@ -1,13 +1,9 @@
 package com.paulvickers.fit4life.data.repository
 
-import androidx.room.Query
 import com.paulvickers.fit4life.data.data_source.WorkoutDayDao
-import com.paulvickers.fit4life.data.data_source.WorkoutTitleDao
 import com.paulvickers.fit4life.data.relations.WorkoutWithDays
 import com.paulvickers.fit4life.domain.model.WorkoutDay
-import com.paulvickers.fit4life.domain.model.WorkoutTitle
 import com.paulvickers.fit4life.domain.repository.WorkoutDayRepository
-import com.paulvickers.fit4life.domain.repository.WorkoutTitleRepository
 import kotlinx.coroutines.flow.Flow
 
 class WorkoutDayRepositoryImpl(
@@ -32,6 +28,10 @@ class WorkoutDayRepositoryImpl(
 
     override suspend fun deleteWorkoutDaysByWorkoutTitleId(workoutTitleId: Int) {
         return dao.deleteWorkoutDaysByWorkoutTitleId(workoutTitleId)
+    }
+
+    override suspend fun getDaysWithWorkoutTitle(workoutTitleId: Int): List<WorkoutWithDays> {
+        return  dao.getDaysWithWorkoutTitle(workoutTitleId)
     }
 
     override suspend fun getDaysOfWorkout(workoutTitleId: Int): Flow<List<WorkoutDay>> {

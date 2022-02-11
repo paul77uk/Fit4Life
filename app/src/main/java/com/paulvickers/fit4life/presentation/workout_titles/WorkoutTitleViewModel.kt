@@ -1,42 +1,65 @@
 package com.paulvickers.fit4life.presentation.workout_titles
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paulvickers.fit4life.domain.model.WorkoutTitle
-import com.paulvickers.fit4life.domain.use_case.DeleteWorkoutDaysByWorkoutTitleIdUseCase
-import com.paulvickers.fit4life.domain.use_case.DeleteWorkoutTitleUseCase
-import com.paulvickers.fit4life.domain.use_case.GetWorkoutTitlesUseCase
+import com.paulvickers.fit4life.domain.use_case.workout_title_usecases.WorkoutTitleUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutTitleViewModel @Inject constructor(
-    private val getWorkoutTitlesUseCase: GetWorkoutTitlesUseCase,
-    private val deleteWorkoutTitleUseCase: DeleteWorkoutTitleUseCase,
-    private val deleteWorkoutDaysByWorkoutTitleIdUseCase: DeleteWorkoutDaysByWorkoutTitleIdUseCase
+    private val workoutTitleUseCases: WorkoutTitleUseCases
 ) : ViewModel() {
 
-    private var _workoutTitles = MutableStateFlow<List<WorkoutTitle>>(emptyList())
-    val workoutTitles = _workoutTitles.asStateFlow()
+    private var _state = mutableStateOf(WorkoutTitleState())
+    val state: State<WorkoutTitleState> = _state
+
+    private var recentlyDeletedWorkoutTitle: WorkoutTitle? = null
+    private var getWorkoutTitlesJob: Job? = null
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            getWorkoutTitlesUseCase.invoke()
-                .distinctUntilChanged()
-                .collect {
-                    _workoutTitles.value = it
+        getWorkoutTitles()
+    }
+
+    fun onEvent(event: WorkoutTitleEvent) {
+        when (event) {
+            is WorkoutTitleEvent.DeleteWorkoutTitles ->
+                viewModelScope.launch {
+                    workoutTitleUseCases.deleteWorkoutTitleUseCase(event.workoutTitle)
+                    recentlyDeletedWorkoutTitle = event.workoutTitle
+                }
+            is WorkoutTitleEvent.GetWorkoutTitles ->
+                getWorkoutTitles()
+            WorkoutTitleEvent.RestoreWorkoutTitle ->
+                viewModelScope.launch {
+                    workoutTitleUseCases.insertWorkoutTitleUseCase(
+                        recentlyDeletedWorkoutTitle ?: return@launch
+                    )
+                    recentlyDeletedWorkoutTitle = null
                 }
         }
     }
 
-    fun deleteWorkoutTitleAndChildren(workoutTitle: WorkoutTitle) = viewModelScope.launch {
-        deleteWorkoutTitleUseCase.invoke(workoutTitle)
-        workoutTitle.id?.let { deleteWorkoutDaysByWorkoutTitleIdUseCase.invoke(it) }
+    private fun getWorkoutTitles() {
+        getWorkoutTitlesJob?.cancel()
+        getWorkoutTitlesJob = workoutTitleUseCases.getWorkoutTitlesUseCase()
+            .onEach { workoutTitles ->
+                _state.value = state.value.copy(
+                    workoutTitle = workoutTitles
+                )
+            }
+            .launchIn(viewModelScope)
     }
+
+//    fun deleteWorkoutTitleAndChildren(workoutTitle: WorkoutTitle) = viewModelScope.launch {
+//        workoutTitleUseCases.deleteWorkoutTitleUseCase.invoke(workoutTitle)
+//    }
 
 }

@@ -21,6 +21,10 @@ class WorkoutTitleRepositoryImpl(
         return dao.insertWorkoutTitle(workoutTitle)
     }
 
+    override suspend fun updateWorkoutTitle(workoutTitle: WorkoutTitle) {
+        return dao.updateWorkoutTitle(workoutTitle)
+    }
+
     override suspend fun deleteWorkoutTitle(workoutTitle: WorkoutTitle) {
         return dao.deleteWorkoutTitle(workoutTitle)
     }

@@ -8,3 +8,5 @@ data class WorkoutTitle(
     @PrimaryKey val id: Int? = null,
     val title: String
 )
+
+class InvalidWorkoutTitleException(message: String): Exception(message)

@@ -26,4 +26,8 @@ interface WorkoutDayDao {
     @Query("SELECT * FROM WorkoutDay WHERE workoutTitleId = :workoutTitleId ")
     fun getDaysOfWorkout(workoutTitleId: Int): Flow<List<WorkoutDay>>
 
+    @Transaction
+    @Query("SELECT * FROM WorkoutTitle WHERE id = :workoutTitleId ")
+    fun getDaysWithWorkoutTitle(workoutTitleId: Int): List<WorkoutWithDays>
+
 }

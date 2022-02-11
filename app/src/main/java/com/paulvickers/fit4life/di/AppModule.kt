@@ -7,7 +7,10 @@ import com.paulvickers.fit4life.data.repository.WorkoutDayRepositoryImpl
 import com.paulvickers.fit4life.data.repository.WorkoutTitleRepositoryImpl
 import com.paulvickers.fit4life.domain.repository.WorkoutDayRepository
 import com.paulvickers.fit4life.domain.repository.WorkoutTitleRepository
-import com.paulvickers.fit4life.domain.use_case.*
+import com.paulvickers.fit4life.domain.use_case.DeleteWorkoutDaysByWorkoutTitleIdUseCase
+import com.paulvickers.fit4life.domain.use_case.GetDaysOfWorkoutUseCase
+import com.paulvickers.fit4life.domain.use_case.InsertWorkoutDayUseCase
+import com.paulvickers.fit4life.domain.use_case.workout_title_usecases.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,9 +58,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetWorkoutTitleUseCase(repository: WorkoutTitleRepository): GetWorkoutTitlesUseCase {
-        return GetWorkoutTitlesUseCase(
-            repository
+    fun provideWorkoutUseCases(repository: WorkoutTitleRepository): WorkoutTitleUseCases {
+        return WorkoutTitleUseCases(
+            getWorkoutTitlesUseCase = GetWorkoutTitlesUseCase(repository),
+            getWorkoutTitleByIdUseCase = GetWorkoutTitleByIdUseCase(repository),
+            insertWorkoutTitleUseCase = InsertWorkoutTitleUseCase(repository),
+            deleteWorkoutTitleUseCase = DeleteWorkoutTitleUseCase(repository),
+            updateWorkoutTitleUseCase = UpdateWorkoutTitleUseCase(repository)
         )
     }
 
@@ -71,24 +78,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDeleteWorkoutTitleUseCase(repository: WorkoutTitleRepository): DeleteWorkoutTitleUseCase {
-        return DeleteWorkoutTitleUseCase(
-            repository
-        )
-    }
-
-    @Provides
-    @Singleton
     fun provideDeleteWorkoutDaysByWorkoutTitleIdTitleUseCase(repository: WorkoutDayRepository): DeleteWorkoutDaysByWorkoutTitleIdUseCase {
         return DeleteWorkoutDaysByWorkoutTitleIdUseCase(
-            repository
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideInsertWorkoutTitleUseCase(repository: WorkoutTitleRepository): InsertWorkoutTitleUseCase {
-        return InsertWorkoutTitleUseCase(
             repository
         )
     }

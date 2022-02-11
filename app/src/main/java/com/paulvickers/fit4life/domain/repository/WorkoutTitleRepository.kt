@@ -11,5 +11,7 @@ interface WorkoutTitleRepository {
 
     suspend fun insertWorkoutTitle(workoutTitle: WorkoutTitle)
 
+    suspend fun updateWorkoutTitle(workoutTitle: WorkoutTitle)
+
     suspend fun deleteWorkoutTitle(workoutTitle: WorkoutTitle)
 }

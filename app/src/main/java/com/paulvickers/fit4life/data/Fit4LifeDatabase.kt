@@ -4,8 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.paulvickers.fit4life.data.data_source.WorkoutDayDao
-import com.paulvickers.fit4life.di.ApplicationScope
 import com.paulvickers.fit4life.data.data_source.WorkoutTitleDao
+import com.paulvickers.fit4life.di.ApplicationScope
 import com.paulvickers.fit4life.domain.model.WorkoutDay
 import com.paulvickers.fit4life.domain.model.WorkoutTitle
 import kotlinx.coroutines.CoroutineScope

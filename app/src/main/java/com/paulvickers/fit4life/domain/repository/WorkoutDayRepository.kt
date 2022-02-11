@@ -1,6 +1,5 @@
 package com.paulvickers.fit4life.domain.repository
 
-import androidx.room.Query
 import com.paulvickers.fit4life.data.relations.WorkoutWithDays
 import com.paulvickers.fit4life.domain.model.WorkoutDay
 import kotlinx.coroutines.flow.Flow
@@ -18,5 +17,7 @@ interface WorkoutDayRepository {
     suspend fun getDaysOfWorkout(workoutTitleId: Int): Flow<List<WorkoutDay>>
 
     suspend fun deleteWorkoutDaysByWorkoutTitleId(workoutTitleId: Int)
+
+    suspend fun getDaysWithWorkoutTitle(workoutTitleId: Int): List<WorkoutWithDays>
 
 }
