@@ -1,4 +1,4 @@
-package com.paulvickers.fit4life.presentation.workout_titles
+package com.paulvickers.fit4life.presentation.workout_titles.workout_title_list
 
 import com.paulvickers.fit4life.domain.model.WorkoutTitle
 

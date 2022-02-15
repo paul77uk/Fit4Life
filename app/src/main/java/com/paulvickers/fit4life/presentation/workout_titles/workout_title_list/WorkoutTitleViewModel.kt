@@ -1,4 +1,4 @@
-package com.paulvickers.fit4life.presentation.workout_titles
+package com.paulvickers.fit4life.presentation.workout_titles.workout_title_list
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -57,9 +57,5 @@ class WorkoutTitleViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
     }
-
-//    fun deleteWorkoutTitleAndChildren(workoutTitle: WorkoutTitle) = viewModelScope.launch {
-//        workoutTitleUseCases.deleteWorkoutTitleUseCase.invoke(workoutTitle)
-//    }
 
 }

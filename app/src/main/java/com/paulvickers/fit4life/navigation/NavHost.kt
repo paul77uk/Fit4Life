@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.paulvickers.fit4life.presentation.add_title.AddTitleScreen
-import com.paulvickers.fit4life.presentation.edit_title.EditTitleScreen
-import com.paulvickers.fit4life.presentation.workout_days.WorkoutDayScreen
-import com.paulvickers.fit4life.presentation.workout_titles.WorkoutTitleScreen
+import com.paulvickers.fit4life.presentation.workout_days.add_edit_days.AddDayScreen
+import com.paulvickers.fit4life.presentation.workout_days.day_list.WorkoutDayScreen
+import com.paulvickers.fit4life.presentation.workout_titles.add_edit_title.AddTitleScreen
+import com.paulvickers.fit4life.presentation.workout_titles.workout_title_list.WorkoutTitleScreen
 
 @Composable
 fun NavSetUp() {
@@ -23,7 +23,7 @@ fun NavSetUp() {
         }
         composable(
             route = Screen.DayScreen.route
-                    + "?workoutTitle={workoutTitle}&workoutId={workoutId}",
+                    + "?workoutTitle={workoutTitle}&workoutTitleId={workoutTitleId}",
             arguments = listOf(
                 navArgument(
                     name = "workoutTitle"
@@ -32,7 +32,7 @@ fun NavSetUp() {
                     defaultValue = ""
                 },
                 navArgument(
-                    name = "workoutId"
+                    name = "workoutTitleId"
                 ) {
                     type = NavType.IntType
                     defaultValue = -1
@@ -57,24 +57,24 @@ fun NavSetUp() {
             AddTitleScreen(navController)
         }
         composable(
-            route = Screen.EditTitleScreen.route
-                    + "?workoutTitle={workoutTitle}&workoutId={workoutId}",
+            route = Screen.AddDayScreen.route
+                    + "?dayId={dayId}&workoutTitleId={workoutTitleId}",
             arguments = listOf(
                 navArgument(
-                    name = "workoutTitle"
+                    name = "dayId"
                 ) {
-                    type = NavType.StringType
-                    defaultValue = ""
+                    type = NavType.IntType
+                    defaultValue = -1
                 },
                 navArgument(
-                    name = "workoutId"
+                    name = "workoutTitleId"
                 ) {
                     type = NavType.IntType
                     defaultValue = -1
                 },
             )
         ) {
-            EditTitleScreen(navController)
+            AddDayScreen(navController)
         }
     }
 }

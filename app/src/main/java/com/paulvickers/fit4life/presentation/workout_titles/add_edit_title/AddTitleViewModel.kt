@@ -1,13 +1,13 @@
-package com.paulvickers.fit4life.presentation.add_title
+package com.paulvickers.fit4life.presentation.workout_titles.add_edit_title
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.paulvickers.fit4life.domain.model.InvalidWorkoutTitleException
 import com.paulvickers.fit4life.domain.model.WorkoutTitle
 import com.paulvickers.fit4life.domain.use_case.workout_title_usecases.WorkoutTitleUseCases
+import com.paulvickers.fit4life.utils.InvalidInputException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -65,12 +65,12 @@ class AddTitleViewModel @Inject constructor(
                     try {
                         workoutTitleUseCases.insertWorkoutTitleUseCase(
                             WorkoutTitle(
-                                title = workoutTitleState.value.text,
+                                title = _workoutTitleState.value.text,
                                 id = currentWorkoutTitleId
                             )
                         )
                         _eventFlow.emit(UiEvent.InsertWorkoutTitle)
-                    } catch (e: InvalidWorkoutTitleException) {
+                    } catch (e: InvalidInputException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "Workout title not saved"
@@ -88,7 +88,7 @@ class AddTitleViewModel @Inject constructor(
                             )
                         )
                         _eventFlow.emit(UiEvent.UpdateWorkoutTitle)
-                    } catch (e: InvalidWorkoutTitleException) {
+                    } catch (e: InvalidInputException) {
                         _eventFlow.emit(
                             UiEvent.ShowSnackbar(
                                 message = e.message ?: "Workout title not saved"

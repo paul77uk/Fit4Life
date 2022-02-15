@@ -1,4 +1,4 @@
-package com.paulvickers.fit4life.presentation.add_title
+package com.paulvickers.fit4life.presentation.workout_titles.add_edit_title
 
 data class WorkoutTitleTextFieldState(
     val text: String = "",

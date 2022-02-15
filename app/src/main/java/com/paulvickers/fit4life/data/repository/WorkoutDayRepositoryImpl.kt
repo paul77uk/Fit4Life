@@ -22,6 +22,10 @@ class WorkoutDayRepositoryImpl(
         return dao.insertWorkoutDay(workoutDay)
     }
 
+    override suspend fun updateWorkoutDay(workoutDay: WorkoutDay) {
+        return dao.updateWorkoutDay(workoutDay)
+    }
+
     override suspend fun deleteWorkoutDay(workoutDay: WorkoutDay) {
         return dao.deleteWorkoutDay(workoutDay)
     }

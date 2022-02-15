@@ -7,9 +7,7 @@ import com.paulvickers.fit4life.data.repository.WorkoutDayRepositoryImpl
 import com.paulvickers.fit4life.data.repository.WorkoutTitleRepositoryImpl
 import com.paulvickers.fit4life.domain.repository.WorkoutDayRepository
 import com.paulvickers.fit4life.domain.repository.WorkoutTitleRepository
-import com.paulvickers.fit4life.domain.use_case.DeleteWorkoutDaysByWorkoutTitleIdUseCase
-import com.paulvickers.fit4life.domain.use_case.GetDaysOfWorkoutUseCase
-import com.paulvickers.fit4life.domain.use_case.InsertWorkoutDayUseCase
+import com.paulvickers.fit4life.domain.use_case.workout_day_use_cases.*
 import com.paulvickers.fit4life.domain.use_case.workout_title_usecases.*
 import dagger.Module
 import dagger.Provides
@@ -70,27 +68,47 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGetDaysOfWorkUseCase(repository: WorkoutDayRepository): GetDaysOfWorkoutUseCase {
-        return GetDaysOfWorkoutUseCase(
-            repository
+    fun provideDayUseCases(repository: WorkoutDayRepository): WorkoutDayUseCases {
+        return WorkoutDayUseCases(
+            insertWorkoutDayUseCase = InsertWorkoutDayUseCase(repository),
+            updateWorkoutDayUseCase = UpdateWorkoutDayUseCase(repository),
+            getDaysOfWorkoutUseCase = GetDaysOfWorkoutUseCase(repository),
+            getWorkoutDayByIdUseCase = GetWorkoutDayByIdUseCase(repository),
+            deleteDayUseCase = DeleteDayUseCase(repository)
         )
     }
 
-    @Provides
-    @Singleton
-    fun provideDeleteWorkoutDaysByWorkoutTitleIdTitleUseCase(repository: WorkoutDayRepository): DeleteWorkoutDaysByWorkoutTitleIdUseCase {
-        return DeleteWorkoutDaysByWorkoutTitleIdUseCase(
-            repository
-        )
-    }
+//    @Provides
+//    @Singleton
+//    fun provideGetDaysOfWorkUseCase(repository: WorkoutDayRepository): GetDaysOfWorkoutUseCase {
+//        return GetDaysOfWorkoutUseCase(
+//            repository
+//        )
+//    }
 
-    @Provides
-    @Singleton
-    fun provideInsertWorkoutDayUseCase(repository: WorkoutDayRepository): InsertWorkoutDayUseCase {
-        return InsertWorkoutDayUseCase(
-            repository
-        )
-    }
+//    @Provides
+//    @Singleton
+//    fun provideDeleteWorkoutDaysByWorkoutTitleIdTitleUseCase(repository: WorkoutDayRepository): DeleteWorkoutDaysByWorkoutTitleIdUseCase {
+//        return DeleteWorkoutDaysByWorkoutTitleIdUseCase(
+//            repository
+//        )
+//    }
+
+//    @Provides
+//    @Singleton
+//    fun provideDeleteDayUseCase(repository: WorkoutDayRepository): DeleteDayUseCase {
+//        return DeleteDayUseCase(
+//            repository
+//        )
+//    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideInsertWorkoutDayUseCase(repository: WorkoutDayRepository): InsertWorkoutDayUseCase {
+//        return InsertWorkoutDayUseCase(
+//            repository
+//        )
+//    }
 
 }
 

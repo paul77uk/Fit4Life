@@ -17,6 +17,9 @@ interface WorkoutDayDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDay(workoutDay: WorkoutDay)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateWorkoutDay(workoutDay: WorkoutDay)
+
     @Delete
     suspend fun deleteWorkoutDay(workoutDay: WorkoutDay)
 
