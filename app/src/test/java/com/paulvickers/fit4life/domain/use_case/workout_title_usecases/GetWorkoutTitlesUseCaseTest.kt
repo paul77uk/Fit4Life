@@ -1,9 +1,9 @@
 package com.paulvickers.fit4life.domain.use_case.workout_title_usecases
 
 import com.google.common.truth.Truth.assertThat
-import com.paulvickers.fit4life.data.repository.FakeWorkoutRepository
+import com.paulvickers.fit4life.data.repositories.FakeWorkoutRepository
 import com.paulvickers.fit4life.utils.InvalidInputException
-import com.paulvickers.fit4life.domain.model.WorkoutTitle
+import com.paulvickers.fit4life.data.models.WorkoutTitle
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Before

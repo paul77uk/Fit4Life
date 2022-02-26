@@ -2,13 +2,10 @@ package com.paulvickers.fit4life.di
 
 import android.app.Application
 import androidx.room.Room
-import com.paulvickers.fit4life.data.Fit4LifeDatabase
-import com.paulvickers.fit4life.data.repository.WorkoutDayRepositoryImpl
-import com.paulvickers.fit4life.data.repository.WorkoutTitleRepositoryImpl
-import com.paulvickers.fit4life.domain.repository.WorkoutDayRepository
-import com.paulvickers.fit4life.domain.repository.WorkoutTitleRepository
-import com.paulvickers.fit4life.domain.use_case.workout_day_use_cases.*
-import com.paulvickers.fit4life.domain.use_case.workout_title_usecases.*
+import com.paulvickers.fit4life.data.data_access_objects.ExerciseTitleDao
+import com.paulvickers.fit4life.data.data_access_objects.WorkoutDayDao
+import com.paulvickers.fit4life.data.data_access_objects.WorkoutTitleDao
+import com.paulvickers.fit4life.data.database.Fit4LifeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,71 +41,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutTitleRepository(db: Fit4LifeDatabase): WorkoutTitleRepository {
-        return WorkoutTitleRepositoryImpl(db.workoutTitleDao)
-    }
+    fun provideWorkoutTitleDao(db: Fit4LifeDatabase): WorkoutTitleDao = db.workoutTitleDao
 
     @Provides
     @Singleton
-    fun provideWorkoutDayRepository(db: Fit4LifeDatabase): WorkoutDayRepository {
-        return WorkoutDayRepositoryImpl(db.workoutDayDao)
-    }
+    fun provideWorkoutDayDao(db: Fit4LifeDatabase): WorkoutDayDao = db.workoutDayDao
 
     @Provides
     @Singleton
-    fun provideWorkoutUseCases(repository: WorkoutTitleRepository): WorkoutTitleUseCases {
-        return WorkoutTitleUseCases(
-            getWorkoutTitlesUseCase = GetWorkoutTitlesUseCase(repository),
-            getWorkoutTitleByIdUseCase = GetWorkoutTitleByIdUseCase(repository),
-            insertWorkoutTitleUseCase = InsertWorkoutTitleUseCase(repository),
-            deleteWorkoutTitleUseCase = DeleteWorkoutTitleUseCase(repository),
-            updateWorkoutTitleUseCase = UpdateWorkoutTitleUseCase(repository)
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun provideDayUseCases(repository: WorkoutDayRepository): WorkoutDayUseCases {
-        return WorkoutDayUseCases(
-            insertWorkoutDayUseCase = InsertWorkoutDayUseCase(repository),
-            updateWorkoutDayUseCase = UpdateWorkoutDayUseCase(repository),
-            getDaysOfWorkoutUseCase = GetDaysOfWorkoutUseCase(repository),
-            getWorkoutDayByIdUseCase = GetWorkoutDayByIdUseCase(repository),
-            deleteDayUseCase = DeleteDayUseCase(repository)
-        )
-    }
-
-//    @Provides
-//    @Singleton
-//    fun provideGetDaysOfWorkUseCase(repository: WorkoutDayRepository): GetDaysOfWorkoutUseCase {
-//        return GetDaysOfWorkoutUseCase(
-//            repository
-//        )
-//    }
-
-//    @Provides
-//    @Singleton
-//    fun provideDeleteWorkoutDaysByWorkoutTitleIdTitleUseCase(repository: WorkoutDayRepository): DeleteWorkoutDaysByWorkoutTitleIdUseCase {
-//        return DeleteWorkoutDaysByWorkoutTitleIdUseCase(
-//            repository
-//        )
-//    }
-
-//    @Provides
-//    @Singleton
-//    fun provideDeleteDayUseCase(repository: WorkoutDayRepository): DeleteDayUseCase {
-//        return DeleteDayUseCase(
-//            repository
-//        )
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideInsertWorkoutDayUseCase(repository: WorkoutDayRepository): InsertWorkoutDayUseCase {
-//        return InsertWorkoutDayUseCase(
-//            repository
-//        )
-//    }
+    fun provideExerciseTitleDao(db: Fit4LifeDatabase): ExerciseTitleDao = db.exerciseTitleDao
 
 }
 

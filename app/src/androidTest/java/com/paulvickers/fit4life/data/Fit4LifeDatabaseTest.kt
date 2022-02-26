@@ -3,8 +3,8 @@ package com.paulvickers.fit4life.data
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
-import com.paulvickers.fit4life.data.data_source.WorkoutTitleDao
-import com.paulvickers.fit4life.domain.model.WorkoutTitle
+import com.paulvickers.fit4life.data.data_access_objects.WorkoutTitleDao
+import com.paulvickers.fit4life.data.models.WorkoutTitle
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before

@@ -1,5 +1,6 @@
-package com.paulvickers.fit4life.presentation.workout_titles.workout_title_list
+package com.paulvickers.fit4life.presentation.exercise_titles.exercise_title_list
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,7 +13,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -21,23 +25,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.data.models.WorkoutTitle
-import com.paulvickers.fit4life.presentation.destinations.AddTitleScreenDestination
-import com.paulvickers.fit4life.presentation.destinations.WorkoutDayScreenDestination
-import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
 import com.paulvickers.fit4life.utils.TestTags
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterialApi::class)
-@Destination(start = true)
+@Destination
 @Composable
-fun WorkoutTitleScreen(
-    navigator: DestinationsNavigator,
-    viewModel: WorkoutTitleViewModel = hiltViewModel()
+fun ExerciseTitleScreen(
+    viewModel: ExerciseTitleViewModel = hiltViewModel()
 ) {
-    val allWorkoutTitles by viewModel.allWorkoutTitles.collectAsState()
-    lateinit var workoutTitle: WorkoutTitle
-    var openDialog by remember { mutableStateOf(false) }
+    val exerciseTitles = viewModel.exerciseTitles.collectAsState().value
+//    val scaffoldState = rememberScaffoldState()
+//    val scope = rememberCoroutineScope()
+    var workoutTitle = WorkoutTitle(title = "")
     Scaffold(
         topBar = {
             TopAppBar(content = {
@@ -54,9 +54,9 @@ fun WorkoutTitleScreen(
                 modifier = Modifier
                     .testTag(TestTags.FLOATING_BUTTON),
                 onClick = {
-                    navigator.navigate(
-                        AddTitleScreenDestination(workoutTitleId = -1, workoutTitleTitle = "")
-                    )
+//                    navController.navigate(
+//                        Screen.AddTitleScreen.route
+//                    )
                 }
             ) {
                 Icon(
@@ -68,10 +68,11 @@ fun WorkoutTitleScreen(
 //        scaffoldState = scaffoldState
     ) {
         Column() {
+            val openDialog = remember { mutableStateOf(false)  }
             LazyColumn(
                 Modifier.padding(vertical = 4.dp),
             ) {
-                items(allWorkoutTitles) {
+                items(exerciseTitles) {
                     Card(
                         Modifier
                             .padding(horizontal = 8.dp, vertical = 4.dp),
@@ -79,19 +80,19 @@ fun WorkoutTitleScreen(
                     ) {
                         ListItem(
                             modifier = Modifier.clickable {
-                                navigator.navigate(
-                                    WorkoutDayScreenDestination(it.id ?: -1, it.title)
-                                )
+//                                navController.navigate(
+//                                    Screen.DayScreen.route
+//                                            + "?workoutTitle=${it.title}&workoutTitleId=${it.id}"
+//                                )
+                                Log.d("2TAG", "WorkoutTitleId: ${it.id}")
                             },
                             icon = {
                                 IconButton(
                                     onClick = {
-                                        navigator.navigate(
-                                            AddTitleScreenDestination(
-                                                workoutTitleId = it.id ?: -1,
-                                                workoutTitleTitle = it.title
-                                            )
-                                        )
+//                                        navController.navigate(
+//                                            Screen.AddTitleScreen.route
+//                                                    + "?workoutTitleId=${it.id}"
+//                                        )
                                     }
                                 ) {
                                     Icon(
@@ -112,8 +113,8 @@ fun WorkoutTitleScreen(
                             trailing = {
                                 IconButton(
                                     onClick = {
-                                        openDialog = true
-                                        workoutTitle = it
+//                                        openDialog.value = true
+//                                        workoutTitle = it
 //                                        scope.launch {
 //                                            val result = scaffoldState.snackbarHostState.showSnackbar(
 //                                                message = "Are you sure you want to delete workout",
@@ -137,17 +138,15 @@ fun WorkoutTitleScreen(
                 }
             }
 
-            if (openDialog) {
-                DialogWindow(
-                    dismiss = { openDialog = false },
-                    delete = {
-                        viewModel.deleteWorkoutTitle(workoutTitle)
-//                        viewModel.onEvent(WorkoutTitleEvent.DeleteWorkoutTitles(workoutTitle))
-                        openDialog = false
-                    },
-                    titleToDelete = "workout"
-                )
-            }
+//            if (openDialog.value) {
+//               DialogWindow (
+//                   dismiss = { openDialog.value = false },
+//                   delete = {
+//                       viewModel.onEvent(WorkoutTitleEvent.DeleteWorkoutTitles(workoutTitle))
+//                       openDialog.value = false
+//                   }
+//               )
+//            }
         }
 
 
