@@ -1,4 +1,4 @@
-package com.paulvickers.fit4life.presentation.workout_days.add_edit_days
+package com.paulvickers.fit4life.presentation.exercise_titles.add_edit_exercises
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,16 +16,17 @@ import kotlinx.coroutines.launch
 
 @Destination
 @Composable
-fun AddDayScreen(
+fun AddExerciseScreen(
+    exerciseId: Int,
+    exerciseTitle: String,
     dayId: Int,
-    day: String,
-    workoutTitleId: Int,
     navigator: DestinationsNavigator,
-    viewModel: AddDayViewModel = hiltViewModel()
+    viewModel: AddExerciseViewModel = hiltViewModel()
 ) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
-    var textState by rememberSaveable { mutableStateOf(day) }
+    var textState by rememberSaveable { mutableStateOf(exerciseTitle) }
+
     Scaffold(
         scaffoldState = scaffoldState
     ) {
@@ -38,7 +39,7 @@ fun AddDayScreen(
                 onValueChange = {
                     textState = it
                 },
-                label = { Text(text = "Enter day title") },
+                label = { Text(text = "Enter exercise title") },
                 modifier = Modifier
                     .padding(16.dp),
                 singleLine = true
@@ -46,16 +47,16 @@ fun AddDayScreen(
             Button(
                 onClick = {
                     if (textState.isNotBlank()) {
-                        viewModel.addUpdateDay(
+                        viewModel.addExerciseTitle(
+                            exerciseId = exerciseId,
+                            exerciseTitle = textState,
                             dayId = dayId,
-                            day = textState,
-                            workoutTitleId = workoutTitleId
                         )
                         navigator.popBackStack()
                     } else {
                         scope.launch {
                             scaffoldState.snackbarHostState.showSnackbar(
-                                "Day title cannot be empty", null, SnackbarDuration.Short
+                                "Exercise title cannot be empty", null, SnackbarDuration.Short
                             )
                         }
                     }

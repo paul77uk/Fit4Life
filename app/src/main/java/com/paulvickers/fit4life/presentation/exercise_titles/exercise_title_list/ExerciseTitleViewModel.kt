@@ -12,40 +12,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseTitleViewModel @Inject constructor(
-    private val exerciseTitleRepository: ExerciseTitleRepository
+    private val exerciseTitleRepository: ExerciseTitleRepository,
 ) : ViewModel() {
 
     private var _exerciseTitles = MutableStateFlow<List<ExerciseTitle>>(emptyList())
     val exerciseTitles: StateFlow<List<ExerciseTitle>> = _exerciseTitles
 
-    init {
-        getExerciseTitles()
-    }
-
-//    fun onEvent(event: WorkoutTitleEvent) {
-//        when (event) {
-//            is WorkoutTitleEvent.DeleteWorkoutTitles ->
-//                viewModelScope.launch {
-//                    workoutTitleUseCases.deleteWorkoutTitleUseCase(event.workoutTitle)
-//                    recentlyDeletedWorkoutTitle = event.workoutTitle
-//                }
-//            is WorkoutTitleEvent.GetWorkoutTitles ->
-//                getWorkoutTitles()
-//            WorkoutTitleEvent.RestoreWorkoutTitle ->
-//                viewModelScope.launch {
-//                    workoutTitleUseCases.insertWorkoutTitleUseCase(
-//                        recentlyDeletedWorkoutTitle ?: return@launch
-//                    )
-//                    recentlyDeletedWorkoutTitle = null
-//                }
-//        }
-//    }
-
-    private fun getExerciseTitles() {
+    fun getExerciseTitles(dayId: Int) {
         viewModelScope.launch {
-           exerciseTitleRepository.getExercisesByDayId(2).collect {
+           exerciseTitleRepository.getExercisesByDayId(dayId).collect {
                 _exerciseTitles.value = it
             }
+        }
+    }
+
+    fun deleteExercise(exerciseTitle: ExerciseTitle) {
+        viewModelScope.launch {
+            exerciseTitleRepository.deleteExerciseTitle(exerciseTitle)
         }
     }
 

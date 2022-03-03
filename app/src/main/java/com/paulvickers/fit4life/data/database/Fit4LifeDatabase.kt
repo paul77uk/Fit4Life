@@ -4,9 +4,11 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.paulvickers.fit4life.data.data_access_objects.ExerciseTitleDao
+import com.paulvickers.fit4life.data.data_access_objects.SetDao
 import com.paulvickers.fit4life.data.data_access_objects.WorkoutDayDao
 import com.paulvickers.fit4life.data.data_access_objects.WorkoutTitleDao
 import com.paulvickers.fit4life.data.models.ExerciseTitle
+import com.paulvickers.fit4life.data.models.Set
 import com.paulvickers.fit4life.data.models.WorkoutDay
 import com.paulvickers.fit4life.data.models.WorkoutTitle
 import com.paulvickers.fit4life.di.ApplicationScope
@@ -16,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 @Database(
-    entities = [WorkoutTitle::class, WorkoutDay::class, ExerciseTitle::class],
+    entities = [WorkoutTitle::class, WorkoutDay::class, ExerciseTitle::class, Set::class],
     version = 1
 )
 abstract class Fit4LifeDatabase : RoomDatabase() {
@@ -24,6 +26,7 @@ abstract class Fit4LifeDatabase : RoomDatabase() {
     abstract val workoutTitleDao: WorkoutTitleDao
     abstract val workoutDayDao: WorkoutDayDao
     abstract val exerciseTitleDao: ExerciseTitleDao
+    abstract val setDao: SetDao
 
     class Callback @Inject constructor(
         private val database: Provider<Fit4LifeDatabase>,
@@ -36,6 +39,7 @@ abstract class Fit4LifeDatabase : RoomDatabase() {
             val workoutTitleDao = database.get().workoutTitleDao
             val workoutDayDao = database.get().workoutDayDao
             val exerciseTitleDao = database.get().exerciseTitleDao
+            val setDao = database.get().setDao
 
             applicationScope.launch {
                 listOfWorkoutTitles.forEach {
@@ -77,6 +81,30 @@ abstract class Fit4LifeDatabase : RoomDatabase() {
                         dayId = 2
                     )
                 )
+
+                for (i in 1..5) {
+                    setDao.insertSet(
+                        Set(
+                            setTitle = "Overhead Press",
+                            setNum = i,
+                            weight = 50,
+                            reps = 10,
+                            exerciseId = 1
+                        )
+                    )
+                }
+
+                for (i in 1..5) {
+                    setDao.insertSet(
+                        Set(
+                            setTitle = "Bench Press",
+                            setNum = i,
+                            weight = 60,
+                            reps = 10,
+                            exerciseId = 2
+                        )
+                    )
+                }
             }
 
         }

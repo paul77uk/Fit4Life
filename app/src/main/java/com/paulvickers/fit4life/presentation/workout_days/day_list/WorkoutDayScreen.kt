@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.data.models.WorkoutDay
 import com.paulvickers.fit4life.presentation.destinations.AddDayScreenDestination
+import com.paulvickers.fit4life.presentation.destinations.ExerciseTitleScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -31,18 +32,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun WorkoutDayScreen(
     workoutTitleId: Int,
     workoutTitleTitle: String,
-//    workoutTitle: WorkoutTitle,
     navigator: DestinationsNavigator,
     viewModel: WorkoutDayViewModel = hiltViewModel()
 ) {
-//    LaunchedEffect(key1 = true) {
-//        viewModel.getAllDays(workoutTitle.id?: -1)
-//    }
     val days by viewModel.days.collectAsState()
     lateinit var day: WorkoutDay
     var openDialog by remember { mutableStateOf(false) }
-    val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
     viewModel.getDays(workoutTitleId)
     Scaffold(
         topBar = {
@@ -70,7 +65,7 @@ fun WorkoutDayScreen(
                 )
             }
         },
-        scaffoldState = scaffoldState
+//        scaffoldState = scaffoldState
     ) {
         LazyColumn(
             modifier = Modifier
@@ -84,15 +79,22 @@ fun WorkoutDayScreen(
                 ) {
                     ListItem(
                         modifier = Modifier.clickable {
-
+                            navigator.navigate(
+                                ExerciseTitleScreenDestination(
+                                    dayId = it.id ?: -1,
+                                    dayTitle = it.day
+                                )
+                            )
                         },
                         icon = {
                             IconButton(
                                 onClick = {
                                     navigator.navigate(
-                                        AddDayScreenDestination(dayId = it.id ?: -1, day = it.day, workoutTitleId = workoutTitleId)
-//                                        Screen.AddDayScreen.route
-//                                                + "?dayId=${it.id}&workoutTitleId=${it.workoutTitleId}"
+                                        AddDayScreenDestination(
+                                            dayId = it.id ?: -1,
+                                            day = it.day,
+                                            workoutTitleId = workoutTitleId
+                                        )
                                     )
                                 }
                             ) {
@@ -115,16 +117,6 @@ fun WorkoutDayScreen(
                                 onClick = {
                                     openDialog = true
                                     day = it
-//                                    viewModel.deleteDay(it)
-//                                    scope.launch {
-//                                        val result = scaffoldState.snackbarHostState.showSnackbar(
-//                                            message = "Day deleted",
-//                                            actionLabel = "Undo"
-//                                        )
-//                                        if (result == SnackbarResult.ActionPerformed) { // if clicked on snackbar
-////                                            viewModel.restoreDay()
-//                                        }
-//                                    }
                                 }
                             ) {
                                 Icon(
