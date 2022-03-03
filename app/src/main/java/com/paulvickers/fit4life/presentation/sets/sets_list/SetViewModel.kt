@@ -40,7 +40,8 @@ class SetViewModel @Inject constructor(
         setNum: Int,
         weight: Int,
         reps: Int,
-        exerciseId: Int
+        exerciseId: Int,
+        isCompleted: Boolean
     ) {
         viewModelScope.launch {
             if (setId != -1) {
@@ -51,7 +52,8 @@ class SetViewModel @Inject constructor(
                         setNum = setNum,
                         weight = weight,
                         reps = reps,
-                        exerciseId = exerciseId
+                        exerciseId = exerciseId,
+                        isCompleted = isCompleted
                     )
                 )
             } else {

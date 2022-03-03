@@ -9,7 +9,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -62,7 +61,8 @@ fun SetsListScreen(
                         setNum = 0,
                         weight = 0,
                         reps = 0,
-                        exerciseId = exerciseId
+                        exerciseId = exerciseId,
+                        isCompleted = false
                     )
                 }
             ) {
@@ -77,11 +77,12 @@ fun SetsListScreen(
             modifier = Modifier
                 .fillMaxSize(),
         ) {
-            items(sets) {
-                var setNumState by rememberSaveable { mutableStateOf(it.setNum.toString()) }
-                var weightState by rememberSaveable { mutableStateOf(it.weight.toString()) }
-                var repState by rememberSaveable { mutableStateOf(it.reps.toString()) }
-                var textState by rememberSaveable { mutableStateOf(it.setTitle) }
+            items(sets) { setItem ->
+                var setNumState by rememberSaveable { mutableStateOf(setItem.setNum.toString()) }
+                var weightState by rememberSaveable { mutableStateOf(setItem.weight.toString()) }
+                var repState by rememberSaveable { mutableStateOf(setItem.reps.toString()) }
+                var textState by rememberSaveable { mutableStateOf(setItem.setTitle) }
+                var checkedState by rememberSaveable { mutableStateOf(setItem.isCompleted) }
 
                 Card(
                     Modifier
@@ -106,23 +107,36 @@ fun SetsListScreen(
                         onRepsValueChange = {
                             repState = it
                         },
-                        onCheckedChange = { },
-                        onDeleteClicked = {
-                            openDialog = true
-//                                    exerciseTitle = it
-                            set = it
-                        },
-                        onEditClicked = {
+                        checked = checkedState,
+                        onCheckedChange = {
+                            checkedState = it
                             viewModel.addSet(
-                                setId = it.id ?: -1,
+                                setId = setItem.id ?: -1,
                                 setTitle = textState,
                                 setNum = setNumState.toInt(),
                                 weight = weightState.toInt(),
                                 reps = repState.toInt(),
-                                exerciseId = exerciseId
+                                exerciseId = exerciseId,
+                                isCompleted = checkedState
                             )
                             keyboardController?.hide()
-                        }
+                        },
+                        onDeleteClicked = {
+                            openDialog = true
+//                                    exerciseTitle = it
+                            set = setItem
+                        },
+//                        onEditClicked = {
+//                            viewModel.addSet(
+//                                setId = setItem.id ?: -1,
+//                                setTitle = textState,
+//                                setNum = setNumState.toInt(),
+//                                weight = weightState.toInt(),
+//                                reps = repState.toInt(),
+//                                exerciseId = exerciseId
+//                            )
+//                            keyboardController?.hide()
+//                        }
                     )
                 }
             }
@@ -155,9 +169,10 @@ fun SetTile(
     repsValue: String,
     onRepsValueChange: (String) -> Unit,
 //    onExerciseValueChange: (String) -> Unit,
+    checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
     onDeleteClicked: () -> Unit,
-    onEditClicked: () -> Unit
+//    onEditClicked: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -190,24 +205,24 @@ fun SetTile(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            IconButton(
-                onClick = onEditClicked
-
-                //                navigator.navigate(
-                //                    AddExerciseScreenDestination(
-                //                        exerciseId = it.id ?: -1,
-                //                        exerciseTitle = it.title,
-                //                        dayId = dayId
-                //                    )
-                //                )
-
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Exercise",
-                    tint = MaterialTheme.colors.onSurface
-                )
-            }
+//            IconButton(
+//                onClick = onEditClicked
+//
+//                //                navigator.navigate(
+//                //                    AddExerciseScreenDestination(
+//                //                        exerciseId = it.id ?: -1,
+//                //                        exerciseTitle = it.title,
+//                //                        dayId = dayId
+//                //                    )
+//                //                )
+//
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Edit,
+//                    contentDescription = "Edit Exercise",
+//                    tint = MaterialTheme.colors.onSurface
+//                )
+//            }
             //        Text(
             //            text = setText,
             ////            modifier = Modifier
@@ -253,7 +268,7 @@ fun SetTile(
                 )
             }
             Checkbox(
-                checked = false,
+                checked = checked,
                 onCheckedChange = onCheckedChange,
                 //            modifier = Modifier.weight(0.3f)
             )
@@ -267,7 +282,7 @@ fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit)
 //        modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = text, fontStyle = MaterialTheme.typography.subtitle2.fontStyle,)
+        Text(text = text, fontStyle = MaterialTheme.typography.subtitle2.fontStyle)
         Box(
             contentAlignment = Alignment.Center,
 
@@ -287,7 +302,8 @@ fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit)
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = LocalTextStyle.current.copy(
-                    textAlign = TextAlign.Center),
+                    textAlign = TextAlign.Center
+                ),
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = MaterialTheme.colors.background,
                     unfocusedIndicatorColor = MaterialTheme.colors.background,

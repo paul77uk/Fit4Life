@@ -52,11 +52,18 @@ fun WorkoutDayScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                navigator.navigate(
-                    AddDayScreenDestination(dayId = -1, day = "", workoutTitleId = workoutTitleId)
-//                    Screen.AddDayScreen.route
-//                + "?dayId=-1&workoutTitleId=${workoutTitleId}"
+                viewModel.addUpdateDay(
+                    dayId = -1,
+                    day = "Day ${days.size + 1}",
+                    workoutTitleId = workoutTitleId
                 )
+//                if (days.isEmpty())
+//                    else days.size + 1
+//                navigator.navigate(
+//                    AddDayScreenDestination(dayId = -1, day = "", workoutTitleId = workoutTitleId)
+////                    Screen.AddDayScreen.route
+////                + "?dayId=-1&workoutTitleId=${workoutTitleId}"
+//                )
 //                Log.d("TAG", "WorkoutTitleId: $workoutTitleId")
             }) {
                 Icon(

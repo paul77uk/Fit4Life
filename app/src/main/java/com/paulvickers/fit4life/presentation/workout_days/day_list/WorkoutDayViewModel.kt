@@ -77,4 +77,15 @@ class WorkoutDayViewModel @Inject constructor(
         }
     }
 
+    fun addUpdateDay(dayId: Int, day: String, workoutTitleId: Int) {
+        viewModelScope.launch {
+            workoutDayRepository.insertWorkoutDay(
+                WorkoutDay(
+                    day = day,
+                    workoutTitleId = workoutTitleId
+                )
+            )
+        }
+    }
+
 }
