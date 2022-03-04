@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SetViewModel @Inject constructor(
-    private val setRepository: SetRepository
+    private val setRepository: SetRepository,
 ) : ViewModel() {
 
     private var _sets = MutableStateFlow<List<Set>>(emptyList())

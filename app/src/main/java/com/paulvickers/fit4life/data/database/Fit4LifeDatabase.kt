@@ -2,31 +2,30 @@ package com.paulvickers.fit4life.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.paulvickers.fit4life.data.data_access_objects.ExerciseTitleDao
-import com.paulvickers.fit4life.data.data_access_objects.SetDao
-import com.paulvickers.fit4life.data.data_access_objects.WorkoutDayDao
-import com.paulvickers.fit4life.data.data_access_objects.WorkoutTitleDao
-import com.paulvickers.fit4life.data.models.ExerciseTitle
+import com.paulvickers.fit4life.data.data_access_objects.*
+import com.paulvickers.fit4life.data.models.*
 import com.paulvickers.fit4life.data.models.Set
-import com.paulvickers.fit4life.data.models.WorkoutDay
-import com.paulvickers.fit4life.data.models.WorkoutTitle
 import com.paulvickers.fit4life.di.ApplicationScope
+import com.paulvickers.fit4life.utils.DateConverter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Provider
 
 @Database(
-    entities = [WorkoutTitle::class, WorkoutDay::class, ExerciseTitle::class, Set::class],
+    entities = [WorkoutTitle::class, WorkoutDay::class, ExerciseTitle::class, Set::class, History::class],
     version = 1
 )
+@TypeConverters(DateConverter::class)
 abstract class Fit4LifeDatabase : RoomDatabase() {
 
     abstract val workoutTitleDao: WorkoutTitleDao
     abstract val workoutDayDao: WorkoutDayDao
     abstract val exerciseTitleDao: ExerciseTitleDao
     abstract val setDao: SetDao
+    abstract val historyDao: HistoryDao
 
     class Callback @Inject constructor(
         private val database: Provider<Fit4LifeDatabase>,

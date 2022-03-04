@@ -2,10 +2,7 @@ package com.paulvickers.fit4life.di
 
 import android.app.Application
 import androidx.room.Room
-import com.paulvickers.fit4life.data.data_access_objects.ExerciseTitleDao
-import com.paulvickers.fit4life.data.data_access_objects.SetDao
-import com.paulvickers.fit4life.data.data_access_objects.WorkoutDayDao
-import com.paulvickers.fit4life.data.data_access_objects.WorkoutTitleDao
+import com.paulvickers.fit4life.data.data_access_objects.*
 import com.paulvickers.fit4life.data.database.Fit4LifeDatabase
 import dagger.Module
 import dagger.Provides
@@ -56,6 +53,9 @@ object AppModule {
     @Singleton
     fun provideSetDao(db: Fit4LifeDatabase): SetDao = db.setDao
 
+    @Provides
+    @Singleton
+    fun provideHistoryDao(db: Fit4LifeDatabase): HistoryDao = db.historyDao
 }
 
 @Retention(AnnotationRetention.RUNTIME)

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,10 +20,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.data.models.Set
 import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
+import com.paulvickers.fit4life.utils.formatDate
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -33,13 +36,16 @@ fun SetsListScreen(
     exerciseId: Int,
     exerciseTitle: String,
     navigator: DestinationsNavigator,
-    viewModel: SetViewModel = hiltViewModel()
+    setViewModel: SetViewModel = hiltViewModel(),
+    historyViewModel: HistoryViewModel = hiltViewModel()
 ) {
-    val sets by viewModel.sets.collectAsState()
+    val sets by setViewModel.sets.collectAsState()
+    val histories by historyViewModel.histories.collectAsState()
     lateinit var set: Set
 
     var openDialog by remember { mutableStateOf(false) }
-    viewModel.getSets(exerciseId)
+    setViewModel.getSets(exerciseId)
+    historyViewModel.getHistories(exerciseId)
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
         topBar = {
@@ -52,10 +58,29 @@ fun SetsListScreen(
                 )
             })
         },
+        bottomBar = {
+            BottomAppBar(cutoutShape = CircleShape) {
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { /*TODO*/ }) {
+                    Text(text = "Workout completed")
+                }
+            }
+        },
+        isFloatingActionButtonDocked = true,
+//        floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
+//            Row(
+//                horizontalArrangement = Arrangement.Center
+//            ) {
+//                Button(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    onClick = { /*TODO*/ }) {
+//                    Text(text = "Workout completed")
+//                }
             FloatingActionButton(
                 onClick = {
-                    viewModel.addSet(
+                    setViewModel.addSet(
                         setId = -1,
                         setTitle = "",
                         setNum = 0,
@@ -110,7 +135,7 @@ fun SetsListScreen(
                         checked = checkedState,
                         onCheckedChange = {
                             checkedState = it
-                            viewModel.addSet(
+                            setViewModel.addSet(
                                 setId = setItem.id ?: -1,
                                 setTitle = textState,
                                 setNum = setNumState.toInt(),
@@ -118,6 +143,13 @@ fun SetsListScreen(
                                 reps = repState.toInt(),
                                 exerciseId = exerciseId,
                                 isCompleted = checkedState
+                            )
+                            historyViewModel.addHistory(
+                                setTitle = textState,
+                                setNum = setNumState.toInt(),
+                                weight = weightState.toInt(),
+                                reps = repState.toInt(),
+                                exerciseId = exerciseId,
                             )
                             keyboardController?.hide()
                         },
@@ -140,13 +172,72 @@ fun SetsListScreen(
                     )
                 }
             }
+            item() {
+//                Column {
+//                    Card(
+//                        Modifier
+//                            .padding(horizontal = 8.dp, vertical = 4.dp)
+//                            .fillMaxWidth(),
+//                        border = BorderStroke(width = 0.5.dp, color = Color.LightGray)
+//                    ) {
+                Text(
+                    text = "History:",
+                    modifier = Modifier.padding(8.dp),
+                    fontStyle = MaterialTheme.typography.subtitle1.fontStyle,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray,
+                )
+//                    }
+////                    Spacer(modifier = Modifier.height((68).dp))
+//                }
+            }
+            items(histories) {
+                Card(
+                    Modifier
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .fillMaxWidth(),
+                    border = BorderStroke(width = 0.5.dp, color = Color.LightGray)
+                ) {
+                    Row(Modifier.padding(16.dp)) {
+                        Column() {
+                            Text(
+                                text = formatDate(it.entryDate.time)
+                            )
+                            Text(text = it.setTitle)
+                        }
+
+                        TextFieldBoxes(
+                            text = "Set",
+                            value = it.setNum.toString(),
+                            onValueChange = {},
+                            readOnly = true
+                        )
+                        TextFieldBoxes(
+                            text = "Weight",
+                            value = it.weight.toString(),
+                            onValueChange = {},
+                            readOnly = true
+                        )
+                        TextFieldBoxes(
+                            text = "Reps",
+                            value = it.reps.toString(),
+                            onValueChange = {},
+                            readOnly = true
+                        )
+                    }
+                }
+            }
+            item() {
+                Spacer(modifier = Modifier.height((68).dp))
+            }
+
         }
 
         if (openDialog) {
             DialogWindow(
                 dismiss = { openDialog = false },
                 delete = {
-                    viewModel.deleteSet(set)
+                    setViewModel.deleteSet(set)
                     openDialog = false
                 },
                 titleToDelete = "exercise"
@@ -277,7 +368,12 @@ fun SetTile(
 }
 
 @Composable
-fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit) {
+fun TextFieldBoxes(
+    text: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    readOnly: Boolean = false
+) {
     Column(
 //        modifier = Modifier.padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -285,10 +381,8 @@ fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit)
         Text(text = text, fontStyle = MaterialTheme.typography.subtitle2.fontStyle)
         Box(
             contentAlignment = Alignment.Center,
-
             modifier = Modifier
-                .width(60.dp)
-                .height(54.dp)
+                .size(52.dp)
 //            .border(
 //                width = 5.dp
 //            )
@@ -296,11 +390,13 @@ fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit)
             TextField(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Next,
                 ),
 //                keyboardActions = KeyboardActions(onDone = ),
                 value = value,
                 onValueChange = onValueChange,
+//                modifier = Modifier.size(48.dp),
+                readOnly = readOnly,
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center
                 ),
@@ -314,15 +410,15 @@ fun TextFieldBoxes(text: String, value: String, onValueChange: (String) -> Unit)
     }
 }
 
-//@OptIn(ExperimentalMaterialApi::class)
-//@Preview(showBackground = true)
-//@Composable
-//fun ListItemPrev() {
-//    Row(
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        TextFieldBoxes(text = "Set", "1")
-//        TextFieldBoxes(text = "Weight", "50")
-//    }
-//}
+@OptIn(ExperimentalMaterialApi::class)
+@Preview(showBackground = true)
+@Composable
+fun ListItemPrev() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextFieldBoxes(text = "Set", "1", onValueChange = {})
+        TextFieldBoxes(text = "Weight", "50", onValueChange = {})
+    }
+}
