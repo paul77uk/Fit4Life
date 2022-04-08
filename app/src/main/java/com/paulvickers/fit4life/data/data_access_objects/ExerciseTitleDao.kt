@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExerciseTitleDao {
 
-    @Query("SELECT * FROM ExerciseTitle Where dayId = :dayId")
-    fun getExercisesByDayId(dayId: Int): Flow<List<ExerciseTitle>>
+    @Query("SELECT * FROM ExerciseTitle")
+    fun getExercises(): Flow<List<ExerciseTitle>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExerciseTitle(exerciseTitle: ExerciseTitle)

@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -46,20 +45,20 @@ fun AddExerciseScreen(
             )
             Button(
                 onClick = {
-                    if (textState.isNotBlank()) {
-                        viewModel.addExerciseTitle(
-                            exerciseId = exerciseId,
-                            exerciseTitle = textState,
-                            dayId = dayId,
-                        )
-                        navigator.popBackStack()
-                    } else {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar(
-                                "Exercise title cannot be empty", null, SnackbarDuration.Short
-                            )
-                        }
-                    }
+//                    if (textState.isNotBlank()) {
+//                        viewModel.addExerciseTitle(
+//                            exerciseId = exerciseId,
+//                            exerciseTitle = textState,
+//                            dayId = dayId,
+//                        )
+//                        navigator.popBackStack()
+//                    } else {
+//                        scope.launch {
+//                            scaffoldState.snackbarHostState.showSnackbar(
+//                                "Exercise title cannot be empty", null, SnackbarDuration.Short
+//                            )
+//                        }
+//                    }
                 }
             ) {
                 Text(text = "Save")

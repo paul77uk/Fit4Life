@@ -2,10 +2,7 @@ package com.paulvickers.fit4life.presentation.exercise_titles.exercise_title_lis
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -16,16 +13,16 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.data.models.ExerciseTitle
 import com.paulvickers.fit4life.presentation.destinations.AddExerciseScreenDestination
+import com.paulvickers.fit4life.presentation.destinations.ExerciseTitleScreenDestination
 import com.paulvickers.fit4life.presentation.destinations.SetsListScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
-import com.paulvickers.fit4life.utils.TestTags
+import com.paulvickers.fit4life.presentation.workout_days.day_list.WorkoutDayViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -33,36 +30,60 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun ExerciseTitleScreen(
-    dayId: Int,
-    dayTitle: String,
+//    dayId: Int,
+//    dayTitle: String,
+    workoutTitleId: Int,
     navigator: DestinationsNavigator,
-    viewModel: ExerciseTitleViewModel = hiltViewModel()
+    viewModel: ExerciseTitleViewModel = hiltViewModel(),
+    dayViewModel: WorkoutDayViewModel = hiltViewModel()
 ) {
     val exerciseTitles by viewModel.exerciseTitles.collectAsState()
+    val days by dayViewModel.days.collectAsState()
     lateinit var exerciseTitle: ExerciseTitle
     var openDialog by remember { mutableStateOf(false) }
-    viewModel.getExerciseTitles(dayId)
+//    val currentScreen by remember { mutableStateOf(dayId) }
+//    viewModel.getExerciseTitles(1)
+//    dayViewModel.getDays(workoutTitleId) // experiment with kazwokout
     Scaffold(
         topBar = {
-            TopAppBar(content = {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = dayTitle,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.h6,
-                )
-            })
+            Column {
+//                TopAppBar(content = {
+//                    Text(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        text = dayTitle,
+//                        textAlign = TextAlign.Center,
+//                        style = MaterialTheme.typography.h6,
+//                    )
+//                })
+
+                BottomAppBar() {
+                    days.forEach {
+                        BottomNavigationItem(
+                            selected = true,
+                            selectedContentColor = Color.White,
+                            onClick = {
+                                navigator.navigate(
+                                    ExerciseTitleScreenDestination(
+                                        it.id ?: -1
+                                    //                                        , it.day
+                                    )
+                                )
+                            },
+                            icon = { Text(text = it.day) },
+                        )
+                    }
+                }
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier
-                    .testTag(TestTags.FLOATING_BUTTON),
+                modifier = Modifier,
                 onClick = {
                     navigator.navigate(
                         AddExerciseScreenDestination(
                             exerciseId = -1,
                             exerciseTitle = "",
-                            dayId = dayId
+                            dayId = 1
                         )
                     )
                 }
@@ -96,12 +117,11 @@ fun ExerciseTitleScreen(
                         icon = {
                             IconButton(
                                 onClick = {
-                                    45
                                     navigator.navigate(
                                         AddExerciseScreenDestination(
                                             exerciseId = it.id ?: -1,
                                             exerciseTitle = it.title,
-                                            dayId = dayId
+                                            dayId = 1
                                         )
                                     )
                                 }

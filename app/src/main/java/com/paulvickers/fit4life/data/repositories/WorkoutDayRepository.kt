@@ -9,8 +9,8 @@ import javax.inject.Inject
 @ViewModelScoped
 class WorkoutDayRepository @Inject constructor(private val workoutDayDao: WorkoutDayDao) {
 
-    fun getDaysByWorkoutTitleId(workoutTitleId: Int): Flow<List<WorkoutDay>> {
-        return workoutDayDao.getDaysByWorkoutTitleId(workoutTitleId)
+    fun getDaysByWorkoutWeekId(workoutWeekId: Int): Flow<List<WorkoutDay>> {
+        return workoutDayDao.getDaysByWorkoutWeekId(workoutWeekId)
     }
 
     suspend fun insertWorkoutDay(workoutDay: WorkoutDay) {
@@ -24,5 +24,7 @@ class WorkoutDayRepository @Inject constructor(private val workoutDayDao: Workou
     suspend fun deleteWorkoutDay(workoutDay: WorkoutDay) {
         workoutDayDao.deleteWorkoutDay(workoutDay)
     }
+
+    val getMinDayId: Flow<Int> = workoutDayDao.getMinDayId()
 
 }

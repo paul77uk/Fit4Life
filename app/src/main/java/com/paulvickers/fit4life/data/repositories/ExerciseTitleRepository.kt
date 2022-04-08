@@ -9,9 +9,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class ExerciseTitleRepository @Inject constructor(private val exerciseTitleDao: ExerciseTitleDao) {
 
-    fun getExercisesByDayId(dayId: Int): Flow<List<ExerciseTitle>> {
-        return exerciseTitleDao.getExercisesByDayId(dayId)
-    }
+    val getExercises: Flow<List<ExerciseTitle>> = exerciseTitleDao.getExercises()
 
     suspend fun insertExerciseTitle(exerciseTitle: ExerciseTitle) {
         exerciseTitleDao.insertExerciseTitle(exerciseTitle)

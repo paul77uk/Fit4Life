@@ -99,14 +99,14 @@ class AddDayViewModel @Inject constructor(
                     WorkoutDay(
                         id = dayId,
                         day = day,
-                        workoutTitleId = workoutTitleId
+                       workoutWeekId = workoutTitleId
                     )
                 )
             } else {
                 workoutDayRepository.insertWorkoutDay(
                     WorkoutDay(
                         day = day,
-                        workoutTitleId = workoutTitleId
+                        workoutWeekId = workoutTitleId
                     )
                 )
             }

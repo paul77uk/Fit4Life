@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface WorkoutDayDao {
 
-    @Query("SELECT * FROM WorkoutDay WHERE workoutTitleId = :workoutTitleId ")
-    fun getDaysByWorkoutTitleId(workoutTitleId: Int): Flow<List<WorkoutDay>>
+    @Query("SELECT * FROM WorkoutDay WHERE workoutWeekId = :workoutWeekId ")
+    fun getDaysByWorkoutWeekId(workoutWeekId: Int): Flow<List<WorkoutDay>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDay(workoutDay: WorkoutDay)
@@ -18,5 +18,8 @@ interface WorkoutDayDao {
 
     @Delete
     suspend fun deleteWorkoutDay(workoutDay: WorkoutDay)
+
+    @Query("SELECT MIN(id) FROM WorkoutDay")
+    fun getMinDayId() : Flow<Int>
 
 }

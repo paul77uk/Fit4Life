@@ -19,4 +19,7 @@ interface WorkoutTitleDao {
     @Delete
     suspend fun deleteWorkoutTitle(workoutTitle: WorkoutTitle)
 
+    @Query("SELECT MAX(id) FROM WorkoutTitle")
+    fun getMaxId() : Flow<Int>
+
 }

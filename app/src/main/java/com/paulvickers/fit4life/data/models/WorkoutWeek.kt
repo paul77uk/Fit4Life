@@ -6,15 +6,15 @@ import androidx.room.PrimaryKey
 
 @Entity(
     foreignKeys = [ForeignKey(
-        entity = WorkoutWeek::class,
+        entity = WorkoutTitle::class,
         parentColumns = ["id"],
-        childColumns = ["workoutWeekId"],
+        childColumns = ["workoutTitleId"],
         onDelete = ForeignKey.CASCADE, /* when delete the parent class workoutTitle,
         also deletes workoutDay which is related by the child column workoutTitleId */
     )]
 )
-data class WorkoutDay(
+data class WorkoutWeek(
     @PrimaryKey var id: Int? = null,
-    val day: String,
-    val workoutWeekId: Int
+    val week: String,
+    val workoutTitleId: Int
 )

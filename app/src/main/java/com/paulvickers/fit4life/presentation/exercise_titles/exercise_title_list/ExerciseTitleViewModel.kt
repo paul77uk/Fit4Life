@@ -18,13 +18,13 @@ class ExerciseTitleViewModel @Inject constructor(
     private var _exerciseTitles = MutableStateFlow<List<ExerciseTitle>>(emptyList())
     val exerciseTitles: StateFlow<List<ExerciseTitle>> = _exerciseTitles
 
-    fun getExerciseTitles(dayId: Int) {
-        viewModelScope.launch {
-           exerciseTitleRepository.getExercisesByDayId(dayId).collect {
-                _exerciseTitles.value = it
-            }
-        }
-    }
+//    fun getExerciseTitles(dayId: Int) {
+//        viewModelScope.launch {
+//           exerciseTitleRepository.getExercises(dayId).collect {
+//                _exerciseTitles.value = it
+//            }
+//        }
+//    }
 
     fun deleteExercise(exerciseTitle: ExerciseTitle) {
         viewModelScope.launch {

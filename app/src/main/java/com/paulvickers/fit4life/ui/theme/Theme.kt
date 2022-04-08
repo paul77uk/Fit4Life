@@ -1,21 +1,39 @@
 package com.paulvickers.fit4life.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
+@SuppressLint("ConflictingOnColor")
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = F4LLightOrange,
+    primaryVariant = F4LBlack,
+    secondary = F4LLightOrange,
+    background = F4LBlack,
+    onBackground = F4LLightGrey,
+    onPrimary = F4LBlack,
+    onSecondary = F4LLightGrey,
+    surface = F4LDarkGrey,
+    onSurface = F4LLightGrey
 )
 
+@SuppressLint("ConflictingOnColor")
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = F4LLightOrange,
+//    primary = F4LPurpleGrey,
+    primaryVariant = F4LBlack,
+    secondary= F4LLightOrange,
+//    primary = F4LPurpleGrey,,
+//    secondary = F4LPurpleGrey,
+    background = F4LBlack,
+    onBackground = F4LLightGrey,
+    onPrimary = F4LBlack,
+    onSecondary = F4LLightGrey,
+    surface = F4LDarkGrey,
+    onSurface = F4LLightGrey
 
     /* Other default colors to override
     background = Color.White,

@@ -8,9 +8,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -21,21 +18,15 @@ object AppModule {
     @Singleton
     fun provideFit4LifeDatabase(
         app: Application,
-        callback: Fit4LifeDatabase.Callback,
     ): Fit4LifeDatabase {
         return Room.databaseBuilder(
             app,
             Fit4LifeDatabase::class.java,
             Fit4LifeDatabase.DATABASE_NAME,
         )
-            .addCallback(callback)
+            .createFromAsset("database/f4l.db")
             .build()
     }
-
-    @ApplicationScope
-    @Singleton
-    @Provides
-    fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
 
     @Provides
     @Singleton
@@ -44,6 +35,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWorkoutDayDao(db: Fit4LifeDatabase): WorkoutDayDao = db.workoutDayDao
+
+    @Provides
+    @Singleton
+    fun provideWorkoutWeekDao(db: Fit4LifeDatabase): WorkoutWeekDao = db.workoutWeekDao
+
 
     @Provides
     @Singleton
@@ -57,7 +53,3 @@ object AppModule {
     @Singleton
     fun provideHistoryDao(db: Fit4LifeDatabase): HistoryDao = db.historyDao
 }
-
-@Retention(AnnotationRetention.RUNTIME)
-@Qualifier
-annotation class ApplicationScope

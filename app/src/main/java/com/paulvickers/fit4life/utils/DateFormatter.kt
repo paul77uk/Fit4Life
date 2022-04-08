@@ -5,7 +5,7 @@ import java.util.*
 
 fun formatDate(time: Long): String {
     val date = Date(time)
-    val format = SimpleDateFormat("EEE, d MMM hh:mm aaa",
+    val format = SimpleDateFormat("EEE, d MMM k:mm",
         Locale.getDefault())
     return format.format(date)
 }

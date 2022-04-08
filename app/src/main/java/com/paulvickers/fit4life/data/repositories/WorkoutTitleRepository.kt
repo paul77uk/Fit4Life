@@ -23,4 +23,6 @@ class WorkoutTitleRepository @Inject constructor(private val workoutTitleDao: Wo
         workoutTitleDao.deleteWorkoutTitle(workoutTitle)
     }
 
+    val getMaxId: Flow<Int> = workoutTitleDao.getMaxId()
+
 }

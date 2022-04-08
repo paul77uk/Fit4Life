@@ -44,7 +44,7 @@ fun SetsListScreen(
     lateinit var set: Set
 
     var openDialog by remember { mutableStateOf(false) }
-    setViewModel.getSets(exerciseId)
+//    setViewModel.getSets(exerciseId)
     historyViewModel.getHistories(exerciseId)
     val keyboardController = LocalSoftwareKeyboardController.current
     Scaffold(
@@ -80,15 +80,15 @@ fun SetsListScreen(
 //                }
             FloatingActionButton(
                 onClick = {
-                    setViewModel.addSet(
-                        setId = -1,
-                        setTitle = "",
-                        setNum = 0,
-                        weight = 0,
-                        reps = 0,
-                        exerciseId = exerciseId,
-                        isCompleted = false
-                    )
+//                    setViewModel.addSet(
+//                        setId = -1,
+//                        setTitle = "",
+//                        setNum = 0,
+//                        weight = 0,
+//                        reps = 0,
+//                        exerciseId = exerciseId,
+//                        isCompleted = false
+//                    )
                 }
             ) {
                 Icon(
@@ -106,7 +106,7 @@ fun SetsListScreen(
                 var setNumState by rememberSaveable { mutableStateOf(setItem.setNum.toString()) }
                 var weightState by rememberSaveable { mutableStateOf(setItem.weight.toString()) }
                 var repState by rememberSaveable { mutableStateOf(setItem.reps.toString()) }
-                var textState by rememberSaveable { mutableStateOf(setItem.setTitle) }
+//                var textState by rememberSaveable { mutableStateOf(setItem.setTitle) }
                 var checkedState by rememberSaveable { mutableStateOf(setItem.isCompleted) }
 
                 Card(
@@ -115,49 +115,49 @@ fun SetsListScreen(
                         .fillMaxWidth(),
                     border = BorderStroke(width = 0.5.dp, color = Color.LightGray)
                 ) {
-                    SetTile(
-                        textValue = textState,
-                        onTextValueChange = {
-                            textState = it
-                        },
-                        setValue = setNumState,
-                        onSetValueChange = {
-                            setNumState = it
-                        },
-                        weightValue = weightState,
-                        onWeightValueChange = {
-                            weightState = it
-                        },
-                        repsValue = repState,
-                        onRepsValueChange = {
-                            repState = it
-                        },
-                        checked = checkedState,
-                        onCheckedChange = {
-                            checkedState = it
-                            setViewModel.addSet(
-                                setId = setItem.id ?: -1,
-                                setTitle = textState,
-                                setNum = setNumState.toInt(),
-                                weight = weightState.toInt(),
-                                reps = repState.toInt(),
-                                exerciseId = exerciseId,
-                                isCompleted = checkedState
-                            )
-                            historyViewModel.addHistory(
-                                setTitle = textState,
-                                setNum = setNumState.toInt(),
-                                weight = weightState.toInt(),
-                                reps = repState.toInt(),
-                                exerciseId = exerciseId,
-                            )
-                            keyboardController?.hide()
-                        },
-                        onDeleteClicked = {
-                            openDialog = true
-//                                    exerciseTitle = it
-                            set = setItem
-                        },
+//                    SetTile(
+//                        textValue = textState,
+//                        onTextValueChange = {
+//                            textState = it
+//                        },
+//                        setValue = setNumState,
+//                        onSetValueChange = {
+//                            setNumState = it
+//                        },
+//                        weightValue = weightState,
+//                        onWeightValueChange = {
+//                            weightState = it
+//                        },
+//                        repsValue = repState,
+//                        onRepsValueChange = {
+//                            repState = it
+//                        },
+//                        checked = checkedState,
+//                        onCheckedChange = {
+//                            checkedState = it
+//                            setViewModel.addSet(
+//                                setId = setItem.id ?: -1,
+//                                setTitle = textState,
+//                                setNum = setNumState.toInt(),
+//                                weight = weightState.toInt(),
+//                                reps = repState.toInt(),
+//                                exerciseId = exerciseId,
+//                                isCompleted = checkedState
+//                            )
+//                            historyViewModel.addHistory(
+//                                setTitle = textState,
+//                                setNum = setNumState.toInt(),
+//                                weight = weightState.toInt(),
+//                                reps = repState.toInt(),
+//                                exerciseId = exerciseId,
+//                            )
+//                            keyboardController?.hide()
+//                        },
+//                        onDeleteClicked = {
+//                            openDialog = true
+////                                    exerciseTitle = it
+//                            set = setItem
+//                        },
 //                        onEditClicked = {
 //                            viewModel.addSet(
 //                                setId = setItem.id ?: -1,
@@ -169,7 +169,7 @@ fun SetsListScreen(
 //                            )
 //                            keyboardController?.hide()
 //                        }
-                    )
+//                    )
                 }
             }
             item() {

@@ -8,7 +8,7 @@ import java.util.*
 
 @Entity(
     foreignKeys = [ForeignKey(
-        entity = Set::class,
+        entity = ExerciseTitle::class,
         parentColumns = ["id"],
         childColumns = ["exerciseId"],
         onDelete = ForeignKey.CASCADE
