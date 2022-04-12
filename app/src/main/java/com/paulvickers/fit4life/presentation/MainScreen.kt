@@ -13,10 +13,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.R
 import com.paulvickers.fit4life.presentation.destinations.WorkoutTitleScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DestinationCard
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
+import com.paulvickers.fit4life.presentation.workout_titles.workout_title_list.WorkoutTitleViewModel
 import com.paulvickers.fit4life.ui.theme.F4LLightGrey
 import com.paulvickers.fit4life.ui.theme.Fit4LifeTheme
 import com.ramcosta.composedestinations.annotation.Destination
@@ -26,8 +28,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 fun MainScreen(
     navigator: DestinationsNavigator,
+    viewModel: WorkoutTitleViewModel = hiltViewModel()
 ) {
     MainScreenScaffold { navigator.navigate(WorkoutTitleScreenDestination()) }
+    viewModel.getWorkoutTitles()
 }
 
 @Composable

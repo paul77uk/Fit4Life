@@ -12,6 +12,8 @@ import com.paulvickers.fit4life.ui.theme.Fit4LifeTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
+// TODO: call database in onCreate
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

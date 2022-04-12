@@ -80,8 +80,8 @@ fun WorkoutDayScreen(
     weekState = weeks.firstOrNull()?.week ?: ""
     var weekIdState by rememberSaveable { mutableStateOf(weeks.firstOrNull()?.id ?: 10) }
     var dayState by rememberSaveable { mutableStateOf("") }
-    var weightState by rememberSaveable { mutableStateOf("0") }
-    var repState by rememberSaveable { mutableStateOf("0") }
+    var weightState by rememberSaveable { mutableStateOf("") }
+    var repState by rememberSaveable { mutableStateOf("") }
     var numOfSetsState by rememberSaveable { mutableStateOf("") }
     var exerciseState by rememberSaveable { mutableStateOf("") }
     var expandedState by rememberSaveable { mutableStateOf(false) }

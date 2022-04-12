@@ -24,6 +24,6 @@ data class Set(
     var weight: Int,
     val reps: Int,
     val exerciseId: Int,
-    val isCompleted: Int = 0,
+    val isCompleted: Int,
     val dayId: Int
 )

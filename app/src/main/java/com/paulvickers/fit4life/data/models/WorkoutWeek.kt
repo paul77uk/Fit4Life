@@ -15,6 +15,6 @@ import androidx.room.PrimaryKey
 )
 data class WorkoutWeek(
     @PrimaryKey var id: Int? = null,
-    val week: String,
-    val workoutTitleId: Int
+    var week: String,
+    var workoutTitleId: Int
 )

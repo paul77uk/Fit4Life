@@ -35,12 +35,12 @@ class WorkoutTitleViewModel @Inject constructor(
 
     init {
         getWorkoutTitles()
-        getMaxWorkoutId()
+//        getMaxWorkoutId()
 //        getWorkoutWeeks()
-        getMaxWeekId()
+//        getMaxWeekId()
     }
 
-    private fun getWorkoutTitles() {
+    fun getWorkoutTitles() {
         viewModelScope.launch {
             workoutTitleRepository.getWorkoutTitles.collect {
                 _allWorkoutTitles.value = it
@@ -64,20 +64,20 @@ class WorkoutTitleViewModel @Inject constructor(
         }
     }
 
-    private fun getMaxWorkoutId() {
+    fun getMaxWorkoutId() {
         viewModelScope.launch {
             workoutTitleRepository.getMaxId.collect {
+//                if (it == 0) _maxWorkoutId.value = 1
                 _maxWorkoutId.value = it
             }
         }
     }
 
-    private fun getMaxWeekId() {
+    fun getMaxWeekId() {
 //        getWorkoutWeeks()
         viewModelScope.launch {
-//            if (_allWorkoutWeeks.value.isEmpty()) _maxWeekId.value = 0
-//            else
              weekRepository.getMaxWeekId.collect {
+//                 if (it == 0) _maxWeekId.value = 1
                 _maxWeekId.value = it
             }
         }
