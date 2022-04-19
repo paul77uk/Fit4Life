@@ -81,7 +81,7 @@ abstract class Fit4LifeDatabase : RoomDatabase() {
     }
 
     companion object {
-        const val DATABASE_NAME = "fit4life_db21"
+        const val DATABASE_NAME = "fit4life_db52" // 20 had current workout data
     }
 
 }

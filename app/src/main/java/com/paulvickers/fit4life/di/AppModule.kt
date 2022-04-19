@@ -68,6 +68,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideHistoryDao(db: Fit4LifeDatabase): HistoryDao = db.historyDao
+
 }
 
 @Retention(AnnotationRetention.RUNTIME)

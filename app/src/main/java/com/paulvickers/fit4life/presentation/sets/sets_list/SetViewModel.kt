@@ -20,9 +20,9 @@ class SetViewModel @Inject constructor(
 
 //    var weightState by mutableStateOf(0)
 
-    fun getSets(dayId: Int, exerciseId: Int) {
+    fun getSets(exerciseId: Int) {
         viewModelScope.launch {
-            setRepository.getSetByDayAndExerciseId(dayId).collect {
+            setRepository.getSetByDayId(exerciseId).collect {
                 _sets.value = it
             }
         }
@@ -37,6 +37,8 @@ class SetViewModel @Inject constructor(
     fun addSet(
         numberOfSets: Int,
         exerciseId: Int,
+        isRepsDistTime: Int,
+        exerciseForSetsId: Int,
         dayId: Int
     ) {
         repeat(numberOfSets) {
@@ -45,9 +47,11 @@ class SetViewModel @Inject constructor(
                     Set(
                         setNum = it + 1,
                         weight = 0,
-                        reps = 0,
+                        repsDistTime = 0,
                         exerciseId = exerciseId + 1,
                         isCompleted = 0,
+                        isRepsDistTime = isRepsDistTime,
+                        exerciseForSetsId = exerciseForSetsId,
                         dayId = dayId
                     )
                 )

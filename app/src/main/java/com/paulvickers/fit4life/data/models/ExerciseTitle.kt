@@ -14,5 +14,6 @@ import androidx.room.PrimaryKey
 data class ExerciseTitle(
     @PrimaryKey() val id: Int? = null,
     var title: String,
+    val isCircuit: Int = 0
 //    val dayId: Int
 )

@@ -10,20 +10,16 @@ import androidx.room.PrimaryKey
         parentColumns = ["id"],
         childColumns = ["dayId"],
         onDelete = ForeignKey.CASCADE
-    ),
-        ForeignKey(
-            entity = ExerciseTitle::class,
-            parentColumns = ["id"],
-            childColumns = ["exerciseId"],
-            onDelete = ForeignKey.CASCADE
-        )]
+    )]
 )
 data class Set(
     @PrimaryKey() val id: Int? = null,
     val setNum: Int,
     var weight: Int,
-    val reps: Int,
+    val repsDistTime: Int,
     val exerciseId: Int,
     val isCompleted: Int,
+    val isRepsDistTime: Int = 1,
+    val exerciseForSetsId: Int,
     val dayId: Int
 )

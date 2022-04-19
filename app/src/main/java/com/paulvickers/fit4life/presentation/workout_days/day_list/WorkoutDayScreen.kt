@@ -56,15 +56,15 @@ fun WorkoutDayScreen(
     weekViewModel: WeekViewModel = hiltViewModel(),
     setViewModel: SetViewModel = hiltViewModel()
 ) {
-    weekViewModel.getWeeks(workoutTitleId)
-    val weeks by weekViewModel.weeks.collectAsState()
-    val selectedWeek by weekViewModel.selectedWeek.collectAsState()
-    val exercises by viewModel.exerciseTitles.collectAsState()
-    val sets by setViewModel.sets.collectAsState()
+    viewModel.getWeeks(workoutTitleId)
+    val weeks by viewModel.weeks.collectAsState()
+    val selectedWeek by viewModel.selectedWeek.collectAsState()
+    val exerciseTitles by viewModel.exerciseTitles.collectAsState()
+    val sets by viewModel.sets.collectAsState()
     val minDayId by viewModel.minDayId.collectAsState()
 //    viewModel.getDays(selectedWeek)
-    val days by weekViewModel.days.collectAsState()
-    val selectedDay by weekViewModel.selectedDay.collectAsState()
+    val days by viewModel.days.collectAsState()
+    val selectedDay by viewModel.selectedDay.collectAsState()
     lateinit var day: WorkoutDay
     lateinit var sett: Set
     lateinit var exercise: ExerciseTitle
@@ -96,32 +96,9 @@ fun WorkoutDayScreen(
     Scaffold(
         topBar = {
             Column {
-
-//                TopAppBar(content = {
-//                    Text(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        text = workoutTitleTitle,
-//                        textAlign = TextAlign.Center,
-//                        style = MaterialTheme.typography.h6,
-//                    )
-//                })
                 TopBarText(
                     text = workoutTitleTitle
-//                weekIdState.toString()
                 )
-//                Row (
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-//                    F4LButton(text = idState, rightIcon = {
-//                        Icon(
-//                            imageVector = Icons.Default.ArrowForward,
-//                            contentDescription = "",
-//                            modifier = Modifier.padding(start = 8.dp)
-//                        )
-//                    })
-//                    F4LButton(text = dayState)
-//                }
 
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -132,9 +109,8 @@ fun WorkoutDayScreen(
                             F4LNavButton(
                                 selected = selectedWeek == it.id,
                                 onClick = {
-                                    weekViewModel.setSelectedWeek(it.id ?: 0)
-                                    weekViewModel.getDays()
-//                                    weekViewModel.setSelectedDay(selectedDay)
+                                    viewModel.setSelectedWeek(it.id ?: 0)
+                                    viewModel.getDays()
                                 },
                                 text = it.week
                             )
@@ -152,7 +128,7 @@ fun WorkoutDayScreen(
                             F4LNavButton(
                                 selected = selectedDay == it.id,
                                 onClick = {
-                                    weekViewModel.setSelectedDay(it.id ?: 0)
+                                    viewModel.setSelectedDay(it.id ?: 0)
                                 },
                                 text = it.day
                             )
@@ -168,38 +144,51 @@ fun WorkoutDayScreen(
                 modifier = Modifier
 //                    .fillMaxSize()
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(it)
                     .weight(0.8f)
             ) {
-                setViewModel.getSets(selectedDay, 1)
-                val groupedItems = sets.groupBy { it.exerciseId }
 
-                groupedItems.forEach { (exerciseId, set) ->
+//                viewModel.getSets()
+//                viewModel.getSets(1)
 
+                viewModel.getSets(selectedDay)
+
+                val groupedItems = sets.groupBy { it.exerciseForSetsId }
+
+                groupedItems.forEach { (exerciseForSetsId, set) ->
                     item {
                         Text(
-                            text = exercises[exerciseId - 1].title,
+                            text = exerciseTitles[exerciseForSetsId - 1].title,
                             color = F4LLightOrange,
                             fontSize = 20.sp,
                             fontFamily = bungeeInlineFamily,
                             modifier = Modifier
-                                .padding(5.dp)
+                                .padding(16.dp)
                                 .background(F4LBlack)
                                 .fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
                     }
-
                     items(set) {
+                        val isCircuit = exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 1
                         Column {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
-                                TextFieldBoxes(
-                                    text = "Set",
-                                    value = it.setNum.toString(),
-                                )
+                                if (isCircuit)
+                                    TextFieldBoxes(
+                                        text = "Exercise",
+                                        value = exerciseTitles[it.exerciseId - 1].title,
+                                        widthDivision = if (isCircuit) 4 else 5,
+                                    )
+                                else {
+                                    TextFieldBoxes(
+                                        text = "Set",
+                                        value = it.setNum.toString(),
+                                        widthDivision = if (isCircuit) 4 else 5
+                                    )
+                                }
                                 TextFieldBoxes(
                                     text = "Weight",
                                     value = it.weight.toString(),
@@ -207,29 +196,59 @@ fun WorkoutDayScreen(
                                         weightState = it.weight.toString()
                                         sett = it
                                         openWeightDialog = true
-                                    }
+                                    },
+                                    widthDivision = if (isCircuit) 4 else 5
                                 )
                                 TextFieldBoxes(
-                                    text = "Reps",
-                                    value = it.reps.toString(),
+                                    text = when (it.isRepsDistTime) {
+                                        1 -> "Reps"
+                                        2 -> "Distance"
+                                        else -> "Time"
+                                    },
+                                    value = it.repsDistTime.toString(),
                                     onClick = {
-                                        repState = it.reps.toString()
+                                        repState = it.repsDistTime.toString()
                                         sett = it
                                         openRepDialog = true
-                                    }
+                                    },
+                                    widthDivision = if (isCircuit) 4 else 5
                                 )
-                                TextFieldBoxes(
+                                if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
                                     text = "",
                                     value = "",
                                     checkedState = it.isCompleted == 1,
-                                    onCheckedChange = { weekViewModel.updateSet(it) },
-                                    isChecked = true
+                                    onCheckedChange = { viewModel.updateSet(it) },
+                                    isChecked = true,
+                                    widthDivision = if (isCircuit) 4 else 5
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
+                    if (exerciseTitles[set.first().exerciseForSetsId - 1].isCircuit == 1) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    F4LButton(
+                                        "ROUND COMPLETED",
+                                    onClick = {
+                                        viewModel.updateRound(set.last())
+                                    }
+                                    )
+                                    RoundCount(
+                                        currentRound = set.last().isCompleted,
+                                        numberOfRounds = set.last().setNum
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
+
             }
             if (openWeightDialog) {
                 F4LDialog(
@@ -237,7 +256,7 @@ fun WorkoutDayScreen(
                     save = {
                         openWeightDialog = false
                         if (weightState.isNotBlank() && weightState.isDigitsOnly())
-                            weekViewModel.updateWeight(sett, weightState.toInt())
+                            viewModel.updateWeight(sett, weightState.toInt())
                     },
                     weightValue = weightState,
                     onWeightValueChange = {
@@ -253,7 +272,7 @@ fun WorkoutDayScreen(
                     save = {
                         openRepDialog = false
                         if (repState.isNotBlank() && repState.isDigitsOnly())
-                            weekViewModel.updateReps(sett, repState.toInt())
+                            viewModel.updateReps(sett, repState.toInt())
                     },
                     weightValue = repState,
                     onWeightValueChange = {
@@ -267,7 +286,7 @@ fun WorkoutDayScreen(
                 text = "ADD EXERCISE",
                 onClick = {
                     openAddExerciseDialog = true
-                    exerciseState = exercises[0].title
+                    exerciseState = ""
                 }
             )
             if (openAddExerciseDialog) {
@@ -275,10 +294,12 @@ fun WorkoutDayScreen(
                     dismiss = { openAddExerciseDialog = false },
                     save = {
                         openAddExerciseDialog = false
-                        setViewModel.addSet(
+                        viewModel.addSet(
                             numberOfSets = numOfSetsState.toInt(),
                             exerciseId = selectedIndex,
-                            dayId = selectedDay
+                            isRepsDistTime = 1,
+                            exerciseForSetsId = selectedIndex + 1,
+                            dayId = dayId
                         )
                     },
                     numOfSets = numOfSetsState,
@@ -287,7 +308,7 @@ fun WorkoutDayScreen(
                     },
                     dropDown = {
                         MyDropdownMenuLayout(
-                            menuItems = exercises,
+                            menuItems = exerciseTitles,
                             menuExpandedState = dropdownMenuExpanded,
                             selectedIndex = selectedIndex,
                             updateMenuExpandStatus = { dropdownMenuExpanded = true },
@@ -546,6 +567,7 @@ fun TextFieldBoxes(
     onCheckedChange: () -> Unit = {},
     isChecked: Boolean = false,
     onClick: () -> Unit = {},
+    widthDivision: Int,
 ) {
     Column(
 //        modifier = Modifier.padding(8.dp),
@@ -563,7 +585,7 @@ fun TextFieldBoxes(
                 )
                 .padding(4.dp)
                 .height(48.dp)
-                .width(screenWidth / 5)
+                .width(screenWidth / widthDivision)
                 .clickable { onClick() },
             contentAlignment = Alignment.Center,
         ) {
@@ -592,18 +614,34 @@ fun TextFieldBoxes(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Preview(showBackground = true)
 @Composable
-fun ListItemPrev() {
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TextFieldBoxes(text = "Set", "1")
-        TextFieldBoxes(text = "Weight", "50")
-    }
+fun RoundCount(currentRound: Int, numberOfRounds: Int) {
+    Text(text = "$currentRound/$numberOfRounds", color = F4LLightOrange, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 }
+
+@Composable
+fun CircuitLayout() {
+
+}
+
+@Preview
+@Composable
+fun PrevCircuitLayout() {
+
+}
+
+//@OptIn(ExperimentalMaterialApi::class)
+//@Preview(showBackground = true)
+//@Composable
+//fun ListItemPrev() {
+//    Row(
+//        horizontalArrangement = Arrangement.SpaceEvenly,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        TextFieldBoxes(text = "Set", "1")
+//        TextFieldBoxes(text = "Weight", "50")
+//    }
+//}
 
 @Preview(showBackground = true)
 @Composable
@@ -616,5 +654,18 @@ fun WorkoutDayScreenPrev() {
             icon = { Text(text = "DAY 1") },
         )
 
+    }
+}
+
+@Preview
+@Composable
+fun CircuitCheckboxPrev() {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            RoundCount(0,5)
+        }
     }
 }

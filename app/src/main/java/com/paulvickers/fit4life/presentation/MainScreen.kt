@@ -18,6 +18,7 @@ import com.paulvickers.fit4life.R
 import com.paulvickers.fit4life.presentation.destinations.WorkoutTitleScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DestinationCard
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
+import com.paulvickers.fit4life.presentation.workout_days.day_list.WorkoutDayViewModel
 import com.paulvickers.fit4life.presentation.workout_titles.workout_title_list.WorkoutTitleViewModel
 import com.paulvickers.fit4life.ui.theme.F4LLightGrey
 import com.paulvickers.fit4life.ui.theme.Fit4LifeTheme
@@ -28,10 +29,12 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 fun MainScreen(
     navigator: DestinationsNavigator,
-    viewModel: WorkoutTitleViewModel = hiltViewModel()
+    viewModel: WorkoutTitleViewModel = hiltViewModel(),
+dayViewModel: WorkoutDayViewModel = hiltViewModel()
 ) {
     MainScreenScaffold { navigator.navigate(WorkoutTitleScreenDestination()) }
     viewModel.getWorkoutTitles()
+//    dayViewModel.getExerciseForSet()
 }
 
 @Composable
@@ -41,7 +44,7 @@ private fun MainScreenScaffold(clickable: () -> Unit) {
     ) {
         Column {
             LazyColumn(
-                Modifier.padding(horizontal = 8.dp),
+                Modifier.padding(it),
             ) {
                 item() {
                     DestinationCard(

@@ -9,8 +9,8 @@ import javax.inject.Inject
 @ViewModelScoped
 class SetRepository @Inject constructor(private val setDao: SetDao) {
 
-    fun getSetByDayAndExerciseId(dayId: Int): Flow<List<Set>> {
-        return setDao.getSetsByDayAndExerciseId(dayId)
+    fun getSetByDayId(dayId: Int): Flow<List<Set>> {
+        return setDao.getSetsByDayId(dayId)
     }
 
     suspend fun insertSet(set: Set) {

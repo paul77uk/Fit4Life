@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface SetDao {
 
     @Query("SELECT * FROM `Set` Where dayId = :dayId")
-    fun getSetsByDayAndExerciseId(dayId: Int): Flow<List<Set>>
+    fun getSetsByDayId(dayId: Int): Flow<List<Set>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSet(set: Set)
