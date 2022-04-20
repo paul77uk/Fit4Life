@@ -23,16 +23,14 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.text.isDigitsOnly
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.R
 import com.paulvickers.fit4life.data.models.WorkoutTitle
-import com.paulvickers.fit4life.presentation.destinations.AddTitleScreenDestination
 import com.paulvickers.fit4life.presentation.destinations.WorkoutDayScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DestinationCard
-import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
 import com.paulvickers.fit4life.presentation.shared_components.F4LButton
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
 import com.paulvickers.fit4life.ui.theme.F4LBlack
@@ -59,210 +57,264 @@ fun WorkoutTitleScreen(
     var numDaysState by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
-        topBar = {
-            Box(
-                contentAlignment = Alignment.CenterStart
-            ) {
-                F4LButton(
-                    leftIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            modifier = Modifier
-                                .clickable {
-                                    navigator.popBackStack()
-                                },
-                        )
-                    },
-                )
-                TopBarText(text = "Workouts")
-            }
+        topBar = { WorkoutTitleTopAppBar(navigator) }
+    ) {
+        WorkoutTitleLazyColumn {
+            WorkoutTitleCard(navigator, it)
         }
 
-//        bottomBar = {
-//            BottomBarButton()
-//            Card(
-//                modifier = Modifier
-//                    .padding(10.dp),
-//                shape = RoundedCornerShape(12.dp)
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            LazyColumn(
+//                Modifier
+//                    .fillMaxWidth()
+//                    .padding(vertical = 4.dp)
+//                    .weight(0.8f),
+////                contentPadding = PaddingValues(bottom = 68.dp)
 //            ) {
-//                BottomAppBar(
-//                    modifier = Modifier.clickable {
+//                items(allWorkoutTitles) {
+//                    DestinationCardWithIcons(
+//                        text = it.title,
+//                        textClicked = {
+//                            navigator.navigate(
+//                                WorkoutDayScreenDestination(
+//                                    it.id ?: -1,
+//                                    it.title
+//                                )
+//                            )
+//                        },
+//                        editClicked = {
+//                            navigator.navigate(
+//                                AddTitleScreenDestination(
+//                                    workoutTitleId = it.id ?: -1,
+//                                    workoutTitleTitle = it.title
+//                                )
+//                            )
+//                        },
+//                        deleteClicked = {
+//                            openDialog = true
+//                            workoutTitle = it
+//                        }
+//                    )
+//                    Spacer(modifier = Modifier.height(16.dp))
+////                    Card(
+////                        Modifier
+////                            .padding(horizontal = 10.dp, vertical = 5.dp),
+////                        shape = RoundedCornerShape(12.dp)
+//////                        border = BorderStroke(width = 0.5.dp, color = Color.LightGray)
+////                    ) {
+////                        ListItem(
+////                            modifier = Modifier.clickable {
+////                                navigator.navigate(
+////                                    WorkoutDayScreenDestination(
+////                                        it.id ?: -1,
+////                                        it.title
+////                                    )
+////                                )
+////                            },
+//////                            icon = {
+//////                                IconButton(
+//////                                    onClick = {
+//////                                        navigator.navigate(
+//////                                            AddTitleScreenDestination(
+//////                                                workoutTitleId = it.id ?: -1,
+//////                                                workoutTitleTitle = it.title
+//////                                            )
+//////                                        )
+//////                                    }
+//////                                ) {
+//////                                    Icon(
+//////                                        imageVector = Icons.Default.Edit,
+//////                                        contentDescription = "Edit Workout",
+//////                                        tint = MaterialTheme.colors.onSurface
+//////                                    )
+//////                                }
+//////                            },
+////                            text =
+////                            {
+////                                Text(
+////                                    modifier = Modifier.fillMaxWidth(),
+////                                    text = it.title,
+////                                    textAlign = TextAlign.Center,
+////                                    style = MaterialTheme.typography.body2,
+////                                )
+////                            },
+//////                            trailing = {
+//////                                IconButton(
+//////                                    onClick = {
+//////                                        openDialog = true
+//////                                        workoutTitle = it
+////////                                        scope.launch {
+////////                                            val result = scaffoldState.snackbarHostState.showSnackbar(
+////////                                                message = "Are you sure you want to delete workout",
+////////                                                actionLabel = "Delete",
+////////                                            )
+////////                                            if (result == SnackbarResult.ActionPerformed) { // if clicked on snackbar
+////////                                                viewModel.onEvent(WorkoutTitleEvent.DeleteWorkoutTitles(it))
+////////                                            }
+////////                                        }
+//////                                    }
+//////                                ) {
+//////                                    Icon(
+//////                                        imageVector = Icons.Default.Delete,
+//////                                        contentDescription = "Delete Workout",
+//////                                        tint = MaterialTheme.colors.onSurface
+//////                                    )
+//////                                }
+//////                            }
+////                        )
+////                    }
+//                }
+//
+//            }
+//
+//            if (openDialog) {
+//                DialogWindow(
+//                    dismiss = { openDialog = false },
+//                    delete = {
+//                        viewModel.deleteWorkoutTitle(workoutTitle)
+//                        openDialog = false
+//                    },
+//                    titleToDelete = "workout"
+//                )
+//            }
+//
+//            if (openAddWorkoutDialog) {
+//                AddWorkoutDialog(
+//                    dismiss = { openAddWorkoutDialog = false },
+//                    save = {
+////                        openAddWorkoutDialog = false
+//                        if (titleValueState.isNotBlank() && numWeeksState.isDigitsOnly() && numWeeksState.toInt() > 0 && numDaysState.isDigitsOnly() && numDaysState.toInt() > 0) {
+//                            viewModel.saveWorkoutTitle(titleValueState, numWeeksState, numDaysState)
+//                            navigator.navigate(
+//                                WorkoutDayScreenDestination(
+//                                    workoutTitleId,
+//                                    titleValueState
+//                                )
+//                            )
+//                            titleValueState = ""
+//                            numWeeksState = ""
+//                            numDaysState = ""
+//                        }
+//                    },
+//                    titleValue = titleValueState,
+//                    onTitleValueChange = {
+//                        titleValueState = it
+//                    },
+//                    numWeeksValue = numWeeksState,
+//                    onNumWeeksValueChange = {
+//                        numWeeksState = it
+//                    },
+//                    numDaysValue = numDaysState,
+//                    onNumDaysValueChange = {
+//                        numDaysState = it
+//                    },
+//                    text = ""
+//                )
+//            }
+//
+//            F4LButton("ADD WORKOUT", onClick = {
+////                navigator.navigate(
+////                    AddTitleScreenDestination(
+////                        workoutTitleId = -1,
+////                        workoutTitleTitle = ""
+////                    )
+////                )
+//                openAddWorkoutDialog = true
+//            }
+//            )
+//        }
+    }
+}
+
+@Composable
+fun WorkoutTitleTopAppBar(navigator: DestinationsNavigator) {
+    Box(
+        contentAlignment = Alignment.CenterStart
+    ) {
+        F4LButton(
+            leftIcon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = "Home",
+                    modifier = Modifier
+                        .clickable {
+                            navigator.popBackStack()
+                        },
+                )
+            },
+        )
+        TopBarText(text = "Workouts")
+    }
+}
+
+@Composable
+fun WorkoutTitleLazyColumn(
+    viewModel: WorkoutTitleViewModel = hiltViewModel(),
+    content: @Composable (WorkoutTitle) -> Unit
+) {
+    val allWorkoutTitles by viewModel.allWorkoutTitles.collectAsState()
+    LazyColumn(
+        Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+//                .weight(0.8f),
+    ) {
+        items(allWorkoutTitles) {
+            content(it)
+//                DestinationCardWithIcons(
+//                    text = it.title,
+//                    textClicked = {
 //                        navigator.navigate(
-//                            AddTitleScreenDestination(workoutTitleId = -1, workoutTitleTitle = "")
+//                            WorkoutDayScreenDestination(
+//                                it.id ?: -1,
+//                                it.title
+//                            )
 //                        )
 //                    },
-//                    content = {
-//                        Text(
-//                            modifier = Modifier.fillMaxWidth(),
-//                            text = "Add Workout",
-//                            textAlign = TextAlign.Center,
-//                            style = MaterialTheme.typography.subtitle1,
+//                    editClicked = {
+//                        navigator.navigate(
+//                            AddTitleScreenDestination(
+//                                workoutTitleId = it.id ?: -1,
+//                                workoutTitleTitle = it.title
+//                            )
 //                        )
-//                    })
-//            }
-//        }
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            LazyColumn(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .weight(0.8f),
-//                contentPadding = PaddingValues(bottom = 68.dp)
-            ) {
-                items(allWorkoutTitles) {
-                    DestinationCardWithIcons(
-                        text = it.title,
-                        textClicked = {
-                            navigator.navigate(
-                                WorkoutDayScreenDestination(
-                                    it.id ?: -1,
-                                    it.title
-                                )
-                            )
-                        },
-                        editClicked = {
-                            navigator.navigate(
-                                AddTitleScreenDestination(
-                                    workoutTitleId = it.id ?: -1,
-                                    workoutTitleTitle = it.title
-                                )
-                            )
-                        },
-                        deleteClicked = {
-                            openDialog = true
-                            workoutTitle = it
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-//                    Card(
-//                        Modifier
-//                            .padding(horizontal = 10.dp, vertical = 5.dp),
-//                        shape = RoundedCornerShape(12.dp)
-////                        border = BorderStroke(width = 0.5.dp, color = Color.LightGray)
-//                    ) {
-//                        ListItem(
-//                            modifier = Modifier.clickable {
-//                                navigator.navigate(
-//                                    WorkoutDayScreenDestination(
-//                                        it.id ?: -1,
-//                                        it.title
-//                                    )
-//                                )
-//                            },
-////                            icon = {
-////                                IconButton(
-////                                    onClick = {
-////                                        navigator.navigate(
-////                                            AddTitleScreenDestination(
-////                                                workoutTitleId = it.id ?: -1,
-////                                                workoutTitleTitle = it.title
-////                                            )
-////                                        )
-////                                    }
-////                                ) {
-////                                    Icon(
-////                                        imageVector = Icons.Default.Edit,
-////                                        contentDescription = "Edit Workout",
-////                                        tint = MaterialTheme.colors.onSurface
-////                                    )
-////                                }
-////                            },
-//                            text =
-//                            {
-//                                Text(
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    text = it.title,
-//                                    textAlign = TextAlign.Center,
-//                                    style = MaterialTheme.typography.body2,
-//                                )
-//                            },
-////                            trailing = {
-////                                IconButton(
-////                                    onClick = {
-////                                        openDialog = true
-////                                        workoutTitle = it
-//////                                        scope.launch {
-//////                                            val result = scaffoldState.snackbarHostState.showSnackbar(
-//////                                                message = "Are you sure you want to delete workout",
-//////                                                actionLabel = "Delete",
-//////                                            )
-//////                                            if (result == SnackbarResult.ActionPerformed) { // if clicked on snackbar
-//////                                                viewModel.onEvent(WorkoutTitleEvent.DeleteWorkoutTitles(it))
-//////                                            }
-//////                                        }
-////                                    }
-////                                ) {
-////                                    Icon(
-////                                        imageVector = Icons.Default.Delete,
-////                                        contentDescription = "Delete Workout",
-////                                        tint = MaterialTheme.colors.onSurface
-////                                    )
-////                                }
-////                            }
-//                        )
+//                    },
+//                    deleteClicked = {
+//                        openDialog = true
+//                        workoutTitle = it
 //                    }
-                }
-
-            }
-
-            if (openDialog) {
-                DialogWindow(
-                    dismiss = { openDialog = false },
-                    delete = {
-                        viewModel.deleteWorkoutTitle(workoutTitle)
-                        openDialog = false
-                    },
-                    titleToDelete = "workout"
-                )
-            }
-
-            if (openAddWorkoutDialog) {
-                AddWorkoutDialog(
-                    dismiss = { openAddWorkoutDialog = false },
-                    save = {
-//                        openAddWorkoutDialog = false
-                        if (titleValueState.isNotBlank() && numWeeksState.isDigitsOnly() && numWeeksState.toInt() > 0 && numDaysState.isDigitsOnly() && numDaysState.toInt() > 0) {
-                            viewModel.saveWorkoutTitle(titleValueState, numWeeksState, numDaysState)
-                            navigator.navigate(
-                                WorkoutDayScreenDestination(
-                                    workoutTitleId,
-                                    titleValueState
-                                )
-                            )
-                            titleValueState = ""
-                            numWeeksState = ""
-                            numDaysState = ""
-                        }
-                    },
-                    titleValue = titleValueState,
-                    onTitleValueChange = {
-                        titleValueState = it
-                    },
-                    numWeeksValue = numWeeksState,
-                    onNumWeeksValueChange = {
-                        numWeeksState = it
-                    },
-                    numDaysValue = numDaysState,
-                    onNumDaysValueChange = {
-                        numDaysState = it
-                    },
-                    text = ""
-                )
-            }
-
-            F4LButton("ADD WORKOUT", onClick = {
-//                navigator.navigate(
-//                    AddTitleScreenDestination(
-//                        workoutTitleId = -1,
-//                        workoutTitleTitle = ""
-//                    )
 //                )
-                openAddWorkoutDialog = true
-            }
-            )
+//            Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+}
+
+@Composable
+fun WorkoutTitleCard(
+    navigator: DestinationsNavigator,
+    workoutTitle: WorkoutTitle
+) {
+    Card(
+        modifier = Modifier.padding(8.dp)
+            .clickable {
+                navigator.navigate(
+                    WorkoutDayScreenDestination(
+                        workoutTitleId = workoutTitle.id ?: -1,
+                        workoutTitleTitle = workoutTitle.title
+                    )
+                )
+            },
+        shape = RoundedCornerShape(12.dp),
+        backgroundColor = F4LLightOrange
+    ) {
+        Text(
+            text = workoutTitle.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.subtitle1,
+        )
     }
 }
 
@@ -424,3 +476,15 @@ fun TopAppBarPrev() {
         TopBarText(text = "Workouts")
     }
 }
+
+//@Preview
+//@Composable
+//fun WorkoutTitleColumnPrev() {
+//    WorkoutTitleColumn(())
+//}
+
+//@Preview
+//@Composable
+//fun WorkoutTitleCardPrev() {
+//    WorkoutTitleCard("Workout Title")
+//}

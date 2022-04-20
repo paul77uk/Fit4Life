@@ -57,7 +57,7 @@ fun WorkoutDayScreen(
     setViewModel: SetViewModel = hiltViewModel()
 ) {
     viewModel.getWeeks(workoutTitleId)
-    val weeks by viewModel.weeks.collectAsState()
+//    val weeks by viewModel.weeks.collectAsState()
     val selectedWeek by viewModel.selectedWeek.collectAsState()
     val exerciseTitles by viewModel.exerciseTitles.collectAsState()
     val sets by viewModel.sets.collectAsState()
@@ -77,8 +77,8 @@ fun WorkoutDayScreen(
 
 //    viewModel.getExerciseTitles()
     var weekState by rememberSaveable { mutableStateOf("") }
-    weekState = weeks.firstOrNull()?.week ?: ""
-    var weekIdState by rememberSaveable { mutableStateOf(weeks.firstOrNull()?.id ?: 10) }
+//    weekState = weeks.firstOrNull()?.week ?: ""
+//    var weekIdState by rememberSaveable { mutableStateOf(weeks.firstOrNull()?.id ?: 10) }
     var dayState by rememberSaveable { mutableStateOf("") }
     var weightState by rememberSaveable { mutableStateOf("") }
     var repState by rememberSaveable { mutableStateOf("") }
@@ -96,48 +96,12 @@ fun WorkoutDayScreen(
     Scaffold(
         topBar = {
             Column {
-                TopBarText(
-                    text = workoutTitleTitle
-                )
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    weeks.forEach {
-                        item {
-                            F4LNavButton(
-                                selected = selectedWeek == it.id,
-                                onClick = {
-                                    viewModel.setSelectedWeek(it.id ?: 0)
-                                    viewModel.getDays()
-                                },
-                                text = it.week
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                        }
-                    }
-                }
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    days.forEach {
-                        item {
-                            F4LNavButton(
-                                selected = selectedDay == it.id,
-                                onClick = {
-                                    viewModel.setSelectedDay(it.id ?: 0)
-                                },
-                                text = it.day
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                        }
-                    }
-                }
+                TopBarText(workoutTitleTitle)
+                WeekRow(workoutTitleId)
+                DayRow()
             }
         },
+//        bottomBar = { F4LButton("Button")}
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             LazyColumn(
@@ -235,9 +199,9 @@ fun WorkoutDayScreen(
                                 ) {
                                     F4LButton(
                                         "ROUND COMPLETED",
-                                    onClick = {
-                                        viewModel.updateRound(set.last())
-                                    }
+                                        onClick = {
+                                            viewModel.updateRound(set.last())
+                                        }
                                     )
                                     RoundCount(
                                         currentRound = set.last().isCompleted,
@@ -320,6 +284,59 @@ fun WorkoutDayScreen(
                         )
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun WeekRow(
+    workoutTitleId: Int,
+    viewModel: WorkoutDayViewModel = hiltViewModel(),
+) {
+    viewModel.getWeeks(workoutTitleId)
+    val weeks by viewModel.weeks.collectAsState()
+    val selectedWeek by viewModel.selectedWeek.collectAsState()
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        weeks.forEach {
+            item {
+                F4LNavButton(
+                    selected = selectedWeek == it.id,
+                    onClick = {
+                        viewModel.setSelectedWeek(it.id ?: 0)
+                        viewModel.getDays()
+                    },
+                    text = it.week
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun DayRow(
+    viewModel: WorkoutDayViewModel = hiltViewModel(),
+) {
+    val days by viewModel.days.collectAsState()
+    val selectedDay by viewModel.selectedDay.collectAsState()
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        days.forEach {
+            item {
+                F4LNavButton(
+                    selected = selectedDay == it.id,
+                    onClick = {
+                        viewModel.setSelectedDay(it.id ?: 0)
+                    },
+                    text = it.day
+                )
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }
@@ -616,7 +633,12 @@ fun TextFieldBoxes(
 
 @Composable
 fun RoundCount(currentRound: Int, numberOfRounds: Int) {
-    Text(text = "$currentRound/$numberOfRounds", color = F4LLightOrange, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+    Text(
+        text = "$currentRound/$numberOfRounds",
+        color = F4LLightOrange,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    )
 }
 
 @Composable
@@ -665,7 +687,7 @@ fun CircuitCheckboxPrev() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            RoundCount(0,5)
+            RoundCount(0, 5)
         }
     }
 }

@@ -32,7 +32,7 @@ class WorkoutDayViewModel @Inject constructor(
     val weeks: StateFlow<List<WorkoutWeek>> = _weeks
 
     private val _selectedWeek =
-        MutableStateFlow<Int>(0)
+        MutableStateFlow<Int>(1)
     val selectedWeek: StateFlow<Int> = _selectedWeek
 
     private val _days =
@@ -42,6 +42,10 @@ class WorkoutDayViewModel @Inject constructor(
     private val _selectedDay =
         MutableStateFlow<Int>(0)
     val selectedDay: StateFlow<Int> = _selectedDay
+
+    private val _dayId =
+        MutableStateFlow<Int>(0)
+    val dayId: StateFlow<Int> = _dayId
 
     private var _exerciseTitles = MutableStateFlow<List<ExerciseTitle>>(emptyList())
     val exerciseTitles: StateFlow<List<ExerciseTitle>> = _exerciseTitles
@@ -110,9 +114,16 @@ class WorkoutDayViewModel @Inject constructor(
                     _selectedWeek.value = it.first().id ?: 0
                     firstWeek = false
                 }
+//                else {
+//                    _selectedDay.value = (_selectedWeek.value - 1) * (it.size)
+//                }
                 getDays()
             }
         }
+    }
+
+    fun getDayId(dayId: Int) {
+        _dayId.value = dayId
     }
 
     fun getDays() {
@@ -121,6 +132,7 @@ class WorkoutDayViewModel @Inject constructor(
                 _days.value = it
                 if (firstDay) {
                     _selectedDay.value = it.first().id ?: 0
+//                    firstDay = false
                 }
             }
         }
