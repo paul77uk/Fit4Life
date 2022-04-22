@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "day": "Day 1",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 2,
+    "week": "Day 2",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 3,
+    "week": "Day 3",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 4,
+    "week": "Day 4",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 5,
+    "week": "Day 5",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 6,
+    "week": "Day 6",
+    "workoutWeekId": 1
+  },
+  {
+    "id": 7,
+    "day": "Day 1",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 8,
+    "week": "Day 2",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 9,
+    "week": "Day 3",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 10,
+    "week": "Day 4",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 11,
+    "week": "Day 5",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 12,
+    "week": "Day 6",
+    "workoutWeekId": 2
+  },
+  {
+    "id": 13,
+    "day": "Day 1",
+    "workoutWeekId": 3
+  },
+  {
+    "id": 14,
+    "week": "Day 2",
+    "workoutWeekId": 3
+  },
+  {
+    "id": 15,
+    "week": "Day 3",
+    "workoutWeekId": 3
+  },
+  {
+    "id": 16,
+    "week": "Day 4",
+    "workoutWeekId": 3
+  },
+  {
+    "id": 17,
+    "week": "Day 5",
+    "workoutWeekId": 3
+  },
+  {
+    "id": 18,
+    "week": "Day 6",
+    "workoutWeekId": 3
+  }
+]

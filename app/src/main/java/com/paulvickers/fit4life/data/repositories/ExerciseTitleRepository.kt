@@ -15,6 +15,10 @@ class ExerciseTitleRepository @Inject constructor(private val exerciseTitleDao: 
         exerciseTitleDao.insertExerciseTitle(exerciseTitle)
     }
 
+    suspend fun insertExerciseTitleList(exerciseTitleList: List<ExerciseTitle>) {
+        exerciseTitleDao.insertExerciseTitleList(exerciseTitleList)
+    }
+
     suspend fun updateExerciseTitle(exerciseTitle: ExerciseTitle) {
         exerciseTitleDao.updateExerciseTitle(exerciseTitle)
     }

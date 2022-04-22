@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "week": "Week 1",
+    "workoutTitleId": 1
+  },
+  {
+    "id": 2,
+    "week": "Week 2",
+    "workoutTitleId": 1
+  },
+  {
+    "id": 3,
+    "week": "Week 3",
+    "workoutTitleId": 1
+  },
+  {
+    "id": 4,
+    "week": "Week 4",
+    "workoutTitleId": 1
+  },
+  {
+    "id": 5,
+    "week": "Week 5",
+    "workoutTitleId": 1
+  },
+  {
+    "id": 6,
+    "week": "Week 6",
+    "workoutTitleId": 1
+  }
+]

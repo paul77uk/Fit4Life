@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SetDao {
 
-    @Query("SELECT * FROM `Set` Where dayId = :dayId")
+    @Query("SELECT * FROM `Set` WHERE dayId = :dayId")
     fun getSetsByDayId(dayId: Int): Flow<List<Set>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -15,6 +15,12 @@ interface SetDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateSet(set: Set)
+
+    @Query("UPDATE `Set` SET weight = :weight WHERE id == :id")
+    suspend fun updateWeightById(weight: Int, id: Int)
+
+    @Query("UPDATE `Set` SET repsDistTime = :repsDistTime WHERE id == :id")
+    suspend fun updateRepsDistTimeById(repsDistTime: Int, id: Int)
 
     @Delete
     suspend fun deleteSet(set: Set)

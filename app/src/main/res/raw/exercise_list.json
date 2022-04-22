@@ -1,0 +1,59 @@
+[
+  {
+    "id": 1,
+    "title": "Shouldering"
+  },
+  {
+    "id": 2,
+    "title": "Squat"
+  },
+  {
+    "id": 3,
+    "title": "Lunges"
+  },
+  {
+    "id": 4,
+    "title": "Romanian DL"
+  },
+  {
+    "id": 5,
+    "title": "DL"
+  },
+  {
+    "id": 6,
+    "title": "Farmers"
+  },
+  {
+    "id": 7,
+    "title": "Dips"
+  },
+  {
+    "id": 8,
+    "title": "Shoulder Carry"
+  },
+  {
+    "id": 9,
+    "title": "Lateral Raise"
+  },
+  {
+    "id": 10,
+    "title": "Floor Press"
+  },
+  {
+    "id": 11,
+    "title": "Floor Press Hold"
+  },
+  {
+    "id": 12,
+    "title": "Flys"
+  },
+  {
+    "id": 13,
+    "title": "Bent Row"
+  },
+  {
+    "id": 14,
+    "title": "F4L Circuit",
+    "isCircuit": 1
+  }
+]

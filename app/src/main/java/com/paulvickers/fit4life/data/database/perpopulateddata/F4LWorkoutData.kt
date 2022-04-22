@@ -71,6 +71,14 @@ val exerciseTitles = listOf<ExerciseTitle>(
         title = "F4L Circuit",
         isCircuit = 1
     ),
+    ExerciseTitle(
+        id = 15,
+        title = "PushUps",
+    ),
+    ExerciseTitle(
+        id = 16,
+        title = "Clean & Press",
+    ),
 )
 
 fun workoutWeeks(): List<WorkoutWeek> {
@@ -298,7 +306,31 @@ fun workoutSets(): List<Set> {
                     setNum = 3,
                     weight = 0,
                     repsDistTime = 1,
-                    exerciseId = 3, // Lunges
+                    exerciseId = 2, // Squat
+                    isCompleted = 0,
+                    isRepsDistTime = 3,
+                    exerciseForSetsId = 14, // F4L Circuit
+                    dayId = p
+                )
+            )
+            setsList.add(
+                Set(
+                    setNum = 3,
+                    weight = 0,
+                    repsDistTime = 1,
+                    exerciseId = 15, // PushUps
+                    isCompleted = 0,
+                    isRepsDistTime = 3,
+                    exerciseForSetsId = 14, // F4L Circuit
+                    dayId = p
+                )
+            )
+            setsList.add(
+                Set(
+                    setNum = 3,
+                    weight = 0,
+                    repsDistTime = 1,
+                    exerciseId = 16, // Clean & Press
                     isCompleted = 0,
                     isRepsDistTime = 3,
                     exerciseForSetsId = 14, // F4L Circuit

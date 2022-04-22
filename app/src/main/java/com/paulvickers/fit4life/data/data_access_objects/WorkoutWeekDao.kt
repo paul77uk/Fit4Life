@@ -13,6 +13,9 @@ interface WorkoutWeekDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutWeek(workoutWeek: WorkoutWeek)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutWeekList(workoutWeekList: List<WorkoutWeek>)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateWorkoutWeek(workoutWeek: WorkoutWeek)
 

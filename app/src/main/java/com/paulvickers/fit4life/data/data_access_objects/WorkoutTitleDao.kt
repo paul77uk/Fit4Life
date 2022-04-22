@@ -13,6 +13,9 @@ interface WorkoutTitleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutTitle(workoutTitle: WorkoutTitle)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutTitleList(workoutTitleList: List<WorkoutTitle>)
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateWorkoutTitle(workoutTitle: WorkoutTitle)
 

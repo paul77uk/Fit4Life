@@ -1,12 +1,15 @@
 package com.paulvickers.fit4life.di
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Resources
 import androidx.room.Room
 import com.paulvickers.fit4life.data.data_access_objects.*
 import com.paulvickers.fit4life.data.database.Fit4LifeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +36,10 @@ object AppModule {
             .addCallback(callback)
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun resourcesProvider(@ApplicationContext context: Context): Resources = context.resources
 
     @ApplicationScope
     @Singleton

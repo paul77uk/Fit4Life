@@ -1,5 +1,8 @@
 package com.paulvickers.fit4life.presentation.workout_days.day_list
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paulvickers.fit4life.data.models.ExerciseTitle
@@ -52,6 +55,22 @@ class WorkoutDayViewModel @Inject constructor(
 
     private val _minDayId = MutableStateFlow(0)
     val minDayId: StateFlow<Int> = _minDayId
+
+    private var _openWeightDialog = mutableStateOf(false)
+    val openWeightDialog: State<Boolean> = _openWeightDialog
+
+    private var _weightValue = mutableStateOf(TextFieldValue())
+    val weightValue: State<TextFieldValue> = _weightValue
+
+    private var _openRepDialog = mutableStateOf(false)
+    val openRepDialog: State<Boolean> = _openRepDialog
+
+    private var _repValue = mutableStateOf(TextFieldValue())
+    val repValue: State<TextFieldValue> = _repValue
+
+    private var _setId = mutableStateOf(0)
+    val setId: State<Int> = _setId
+
 
     var firstWeek = false
     var firstDay = false
@@ -211,6 +230,18 @@ class WorkoutDayViewModel @Inject constructor(
         }
     }
 
+    fun updateWeightById(weight: Int) {
+        viewModelScope.launch {
+            setRepository.updateWeightById(weight, _setId.value)
+        }
+    }
+
+    fun updateRepsDistTimeById(repsDisTime: Int) {
+        viewModelScope.launch {
+            setRepository.updateRepsDisTimeById(repsDisTime, _setId.value)
+        }
+    }
+
     fun updateRound(set: Set) {
         viewModelScope.launch {
             setRepository.updateSet(
@@ -264,6 +295,32 @@ class WorkoutDayViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun isLastDay() {
+        if (days.value.last().id == dayId.value) {}// showButton
+            // if button clicked to reset checkboxes
+                // reset all checkboxes by workoutId
+    }
+
+    fun setOpenWeightDialog(bool: Boolean) {
+        _openWeightDialog.value = bool
+    }
+
+    fun setOpenRepDialog(bool: Boolean) {
+        _openRepDialog.value = bool
+    }
+
+    fun onWeightValueChange(weightValue: String) {
+        _weightValue.value = TextFieldValue(weightValue)
+    }
+
+    fun onRepValueChange(repValue: String) {
+        _repValue.value = TextFieldValue(repValue)
+    }
+
+    fun setSetId(id: Int) {
+        _setId.value = id
     }
 
 }

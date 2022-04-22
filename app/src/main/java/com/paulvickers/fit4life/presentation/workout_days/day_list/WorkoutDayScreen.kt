@@ -56,7 +56,7 @@ fun WorkoutDayScreen(
     weekViewModel: WeekViewModel = hiltViewModel(),
     setViewModel: SetViewModel = hiltViewModel()
 ) {
-    viewModel.getWeeks(workoutTitleId)
+//    viewModel.getWeeks(workoutTitleId)
 //    val weeks by viewModel.weeks.collectAsState()
     val selectedWeek by viewModel.selectedWeek.collectAsState()
     val exerciseTitles by viewModel.exerciseTitles.collectAsState()
@@ -90,7 +90,7 @@ fun WorkoutDayScreen(
 
 //    var weekId by rememberSaveable { mutableStateOf(weeks.first().id) }
 //    viewModel.getDays(weekId!!)
-    var dayId by rememberSaveable { mutableStateOf(1) }
+    val dayId by rememberSaveable { mutableStateOf(1) }
     var exerciseId = 1
 
     Scaffold(
@@ -104,187 +104,190 @@ fun WorkoutDayScreen(
 //        bottomBar = { F4LButton("Button")}
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            LazyColumn(
-                modifier = Modifier
-//                    .fillMaxSize()
-                    .fillMaxWidth()
-                    .padding(it)
-                    .weight(0.8f)
-            ) {
+            ExerciseLazyColumn()
+//            LazyColumn(
+//                modifier = Modifier
+////                    .fillMaxSize()
+//                    .fillMaxWidth()
+//                    .padding(it)
+//                    .weight(0.8f)
+//            ) {
+//
+////                viewModel.getSets()
+////                viewModel.getSets(1)
+//
+//                viewModel.getSets(selectedDay)
+//
+//                val groupedItems = sets.groupBy { it.exerciseForSetsId }
+//
+//                groupedItems.forEach { (exerciseForSetsId, set) ->
+//                    item {
+//                        Text(
+//                            text = exerciseTitles[exerciseForSetsId - 1].title,
+//                            color = F4LLightOrange,
+//                            fontSize = 20.sp,
+//                            fontFamily = bungeeInlineFamily,
+//                            modifier = Modifier
+//                                .padding(16.dp)
+//                                .background(F4LBlack)
+//                                .fillMaxWidth(),
+//                            textAlign = TextAlign.Center
+//                        )
+//                    }
+//                    items(set) {
+//                        val isCircuit = exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 1
+//                        Column {
+//                            Row(
+//                                modifier = Modifier.fillMaxWidth(),
+//                                horizontalArrangement = Arrangement.SpaceEvenly
+//                            ) {
+//                                if (isCircuit)
+//                                    TextFieldBoxes(
+//                                        text = "Exercise",
+//                                        value = exerciseTitles[it.exerciseId - 1].title,
+//                                        widthDivision = if (isCircuit) 4 else 5,
+//                                    )
+//                                else {
+//                                    TextFieldBoxes(
+//                                        text = "Set",
+//                                        value = it.setNum.toString(),
+//                                        widthDivision = if (isCircuit) 4 else 5
+//                                    )
+//                                }
+//                                TextFieldBoxes(
+//                                    text = "Weight",
+//                                    value = it.weight.toString(),
+//                                    onClick = {
+//                                        weightState = it.weight.toString()
+//                                        sett = it
+//                                        openWeightDialog = true
+//                                    },
+//                                    widthDivision = if (isCircuit) 4 else 5
+//                                )
+//                                TextFieldBoxes(
+//                                    text = when (it.isRepsDistTime) {
+//                                        1 -> "Reps"
+//                                        2 -> "Distance"
+//                                        else -> "Time"
+//                                    },
+//                                    value = it.repsDistTime.toString(),
+//                                    onClick = {
+//                                        repState = it.repsDistTime.toString()
+//                                        sett = it
+//                                        openRepDialog = true
+//                                    },
+//                                    widthDivision = if (isCircuit) 4 else 5
+//                                )
+//                                if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
+//                                    text = "",
+//                                    value = "",
+//                                    checkedState = it.isCompleted == 1,
+//                                    onCheckedChange = { viewModel.updateSet(it) },
+//                                    isChecked = true,
+//                                    widthDivision = if (isCircuit) 4 else 5
+//                                )
+//                            }
+//                            Spacer(modifier = Modifier.height(8.dp))
+//                        }
+//                    }
+//                    if (exerciseTitles[set.first().exerciseForSetsId - 1].isCircuit == 1) {
+//                        item {
+//                            Box(modifier = Modifier.fillMaxWidth()) {
+//                                Row(
+//                                    modifier = Modifier.fillMaxWidth(),
+//                                    horizontalArrangement = Arrangement.SpaceEvenly,
+//                                    verticalAlignment = Alignment.CenterVertically
+//                                ) {
+//                                    F4LButton(
+//                                        "ROUND COMPLETED",
+//                                        onClick = {
+//                                            viewModel.updateRound(set.last())
+//                                        }
+//                                    )
+//                                    RoundCount(
+//                                        currentRound = set.last().isCompleted,
+//                                        numberOfRounds = set.last().setNum
+//                                    )
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            }
+            WeightDialog()
+            RepDialog()
+//            if (openWeightDialog) {
+//                F4LDialog(
+//                    dismiss = { openWeightDialog = false },
+//                    save = {
+//                        openWeightDialog = false
+//                        if (weightState.isNotBlank() && weightState.isDigitsOnly())
+//                            viewModel.updateWeight(sett, weightState.toInt())
+//                    },
+//                    weightValue = weightState,
+//                    onWeightValueChange = {
+//                        weightState = it
+//                    },
+//                    text = "Weight"
+//                )
+//            }
 
-//                viewModel.getSets()
-//                viewModel.getSets(1)
+//            if (openRepDialog) {
+//                F4LDialog(
+//                    dismiss = { openRepDialog = false },
+//                    save = {
+//                        openRepDialog = false
+//                        if (repState.isNotBlank() && repState.isDigitsOnly())
+//                            viewModel.updateReps(sett, repState.toInt())
+//                    },
+//                    weightValue = repState,
+//                    onWeightValueChange = {
+//                        repState = it
+//                    },
+//                    text = "Reps"
+//                )
+//            }
 
-                viewModel.getSets(selectedDay)
-
-                val groupedItems = sets.groupBy { it.exerciseForSetsId }
-
-                groupedItems.forEach { (exerciseForSetsId, set) ->
-                    item {
-                        Text(
-                            text = exerciseTitles[exerciseForSetsId - 1].title,
-                            color = F4LLightOrange,
-                            fontSize = 20.sp,
-                            fontFamily = bungeeInlineFamily,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .background(F4LBlack)
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    items(set) {
-                        val isCircuit = exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 1
-                        Column {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
-                            ) {
-                                if (isCircuit)
-                                    TextFieldBoxes(
-                                        text = "Exercise",
-                                        value = exerciseTitles[it.exerciseId - 1].title,
-                                        widthDivision = if (isCircuit) 4 else 5,
-                                    )
-                                else {
-                                    TextFieldBoxes(
-                                        text = "Set",
-                                        value = it.setNum.toString(),
-                                        widthDivision = if (isCircuit) 4 else 5
-                                    )
-                                }
-                                TextFieldBoxes(
-                                    text = "Weight",
-                                    value = it.weight.toString(),
-                                    onClick = {
-                                        weightState = it.weight.toString()
-                                        sett = it
-                                        openWeightDialog = true
-                                    },
-                                    widthDivision = if (isCircuit) 4 else 5
-                                )
-                                TextFieldBoxes(
-                                    text = when (it.isRepsDistTime) {
-                                        1 -> "Reps"
-                                        2 -> "Distance"
-                                        else -> "Time"
-                                    },
-                                    value = it.repsDistTime.toString(),
-                                    onClick = {
-                                        repState = it.repsDistTime.toString()
-                                        sett = it
-                                        openRepDialog = true
-                                    },
-                                    widthDivision = if (isCircuit) 4 else 5
-                                )
-                                if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
-                                    text = "",
-                                    value = "",
-                                    checkedState = it.isCompleted == 1,
-                                    onCheckedChange = { viewModel.updateSet(it) },
-                                    isChecked = true,
-                                    widthDivision = if (isCircuit) 4 else 5
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
-                    if (exerciseTitles[set.first().exerciseForSetsId - 1].isCircuit == 1) {
-                        item {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    F4LButton(
-                                        "ROUND COMPLETED",
-                                        onClick = {
-                                            viewModel.updateRound(set.last())
-                                        }
-                                    )
-                                    RoundCount(
-                                        currentRound = set.last().isCompleted,
-                                        numberOfRounds = set.last().setNum
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            if (openWeightDialog) {
-                F4LDialog(
-                    dismiss = { openWeightDialog = false },
-                    save = {
-                        openWeightDialog = false
-                        if (weightState.isNotBlank() && weightState.isDigitsOnly())
-                            viewModel.updateWeight(sett, weightState.toInt())
-                    },
-                    weightValue = weightState,
-                    onWeightValueChange = {
-                        weightState = it
-                    },
-                    text = "Weight"
-                )
-            }
-
-            if (openRepDialog) {
-                F4LDialog(
-                    dismiss = { openRepDialog = false },
-                    save = {
-                        openRepDialog = false
-                        if (repState.isNotBlank() && repState.isDigitsOnly())
-                            viewModel.updateReps(sett, repState.toInt())
-                    },
-                    weightValue = repState,
-                    onWeightValueChange = {
-                        repState = it
-                    },
-                    text = "Reps"
-                )
-            }
-
-            F4LButton(
-                text = "ADD EXERCISE",
-                onClick = {
-                    openAddExerciseDialog = true
-                    exerciseState = ""
-                }
-            )
-            if (openAddExerciseDialog) {
-                AddExerciseDialog(
-                    dismiss = { openAddExerciseDialog = false },
-                    save = {
-                        openAddExerciseDialog = false
-                        viewModel.addSet(
-                            numberOfSets = numOfSetsState.toInt(),
-                            exerciseId = selectedIndex,
-                            isRepsDistTime = 1,
-                            exerciseForSetsId = selectedIndex + 1,
-                            dayId = dayId
-                        )
-                    },
-                    numOfSets = numOfSetsState,
-                    onNumOfSetsValueChange = {
-                        numOfSetsState = it
-                    },
-                    dropDown = {
-                        MyDropdownMenuLayout(
-                            menuItems = exerciseTitles,
-                            menuExpandedState = dropdownMenuExpanded,
-                            selectedIndex = selectedIndex,
-                            updateMenuExpandStatus = { dropdownMenuExpanded = true },
-                            onDismissMenuView = { dropdownMenuExpanded = false },
-                            onMenuItemClick = { index ->
-                                selectedIndex = index
-                                dropdownMenuExpanded = false
-                            }
-                        )
-                    }
-                )
-            }
+//            F4LButton(
+//                text = "ADD EXERCISE",
+//                onClick = {
+//                    openAddExerciseDialog = true
+//                    exerciseState = ""
+//                }
+//            )
+//            if (openAddExerciseDialog) {
+//                AddExerciseDialog(
+//                    dismiss = { openAddExerciseDialog = false },
+//                    save = {
+//                        openAddExerciseDialog = false
+//                        viewModel.addSet(
+//                            numberOfSets = numOfSetsState.toInt(),
+//                            exerciseId = selectedIndex,
+//                            isRepsDistTime = 1,
+//                            exerciseForSetsId = selectedIndex + 1,
+//                            dayId = dayId
+//                        )
+//                    },
+//                    numOfSets = numOfSetsState,
+//                    onNumOfSetsValueChange = {
+//                        numOfSetsState = it
+//                    },
+//                    dropDown = {
+//                        MyDropdownMenuLayout(
+//                            menuItems = exerciseTitles,
+//                            menuExpandedState = dropdownMenuExpanded,
+//                            selectedIndex = selectedIndex,
+//                            updateMenuExpandStatus = { dropdownMenuExpanded = true },
+//                            onDismissMenuView = { dropdownMenuExpanded = false },
+//                            onMenuItemClick = { index ->
+//                                selectedIndex = index
+//                                dropdownMenuExpanded = false
+//                            }
+//                        )
+//                    }
+//                )
+//            }
         }
     }
 }
@@ -339,6 +342,179 @@ fun DayRow(
                 Spacer(modifier = Modifier.width(8.dp))
             }
         }
+    }
+}
+
+@Composable
+fun ExerciseLazyColumn(
+    viewModel: WorkoutDayViewModel = hiltViewModel(),
+) {
+    val sets by viewModel.sets.collectAsState()
+    val selectedDay by viewModel.selectedDay.collectAsState()
+    val exerciseTitles by viewModel.exerciseTitles.collectAsState()
+    var weightState by rememberSaveable { mutableStateOf("") }
+    var repState by rememberSaveable { mutableStateOf("") }
+    var numOfSetsState by rememberSaveable { mutableStateOf("") }
+    lateinit var sett: Set
+    var openWeightDialog by rememberSaveable { mutableStateOf(false) }
+    var openRepDialog by rememberSaveable { mutableStateOf(false) }
+
+    LazyColumn(
+        modifier = Modifier
+//                    .fillMaxSize()
+            .fillMaxWidth()
+//            .padding(it)
+//            .weight(0.8f)
+    ) {
+
+//                viewModel.getSets()
+//                viewModel.getSets(1)
+
+        viewModel.getSets(selectedDay)
+
+        val groupedItems = sets.groupBy { it.exerciseForSetsId }
+
+        groupedItems.forEach { (exerciseForSetsId, set) ->
+            item {
+                Text(
+                    text = exerciseTitles[exerciseForSetsId - 1].title,
+                    color = F4LLightOrange,
+                    fontSize = 20.sp,
+                    fontFamily = bungeeInlineFamily,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(F4LBlack)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+            }
+            items(set) {
+                val isCircuit = exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 1
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        if (isCircuit)
+                            TextFieldBoxes(
+                                text = "Exercise",
+                                value = exerciseTitles[it.exerciseId - 1].title,
+                                widthDivision = if (isCircuit) 4 else 5,
+                            )
+                        else {
+                            TextFieldBoxes(
+                                text = "Set",
+                                value = it.setNum.toString(),
+                                widthDivision = if (isCircuit) 4 else 5
+                            )
+                        }
+                        TextFieldBoxes(
+                            text = "Weight",
+                            value = it.weight.toString(),
+                            onClick = {
+                                viewModel.onWeightValueChange(it.weight.toString())
+//                                weightState = it.weight.toString()
+                                viewModel.setSetId(it.id ?: 0)
+                                viewModel.setOpenWeightDialog(true)
+                            },
+                            widthDivision = if (isCircuit) 4 else 5
+                        )
+                        TextFieldBoxes(
+                            text = when (it.isRepsDistTime) {
+                                1 -> "Reps"
+                                2 -> "Distance"
+                                else -> "Time"
+                            },
+                            value = it.repsDistTime.toString(),
+                            onClick = {
+                                viewModel.onRepValueChange( it.repsDistTime.toString())
+                                viewModel.setSetId(it.id ?: 0)
+                                viewModel.setOpenRepDialog(true)
+                            },
+                            widthDivision = if (isCircuit) 4 else 5
+                        )
+                        if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
+                            text = "",
+                            value = "",
+                            checkedState = it.isCompleted == 1,
+                            onCheckedChange = { viewModel.updateSet(it) },
+                            isChecked = true,
+                            widthDivision = if (isCircuit) 4 else 5
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+            if (exerciseTitles[set.first().exerciseForSetsId - 1].isCircuit == 1) {
+                item {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            F4LButton(
+                                "${set.last().setNum} Rounds",
+//                                onClick = {
+//                                    viewModel.updateRound(set.last())
+//                                }
+                            )
+//                            RoundCount(
+//                                currentRound = set.last().isCompleted,
+//                                numberOfRounds = set.last().setNum
+//                            )
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+@Composable
+fun WeightDialog(
+    viewModel: WorkoutDayViewModel = hiltViewModel()
+) {
+    val openWeightDialog by viewModel.openWeightDialog
+    val weightValue by viewModel.weightValue
+    if (openWeightDialog) {
+        F4LDialog(
+            dismiss = { viewModel.setOpenWeightDialog(false) },
+            save = {
+                viewModel.setOpenWeightDialog(false)
+                if (weightValue.text.isNotBlank() && weightValue.text.isDigitsOnly())
+                    viewModel.updateWeightById(weightValue.text.toInt())
+            },
+            weightValue = weightValue.text,
+            onWeightValueChange = {
+                viewModel.onWeightValueChange(it)
+            },
+            text = "Weight"
+        )
+    }
+}
+
+@Composable
+fun RepDialog(
+    viewModel: WorkoutDayViewModel = hiltViewModel()
+) {
+    val openRepDialog by viewModel.openRepDialog
+    val repValue by viewModel.repValue
+    if (openRepDialog) {
+        F4LDialog(
+            dismiss = { viewModel.setOpenRepDialog(false) },
+            save = {
+                viewModel.setOpenRepDialog(false)
+                if (repValue.text.isNotBlank() && repValue.text.isDigitsOnly())
+                    viewModel.updateRepsDistTimeById(repValue.text.toInt())
+            },
+            weightValue = repValue.text,
+            onWeightValueChange = {
+                viewModel.onRepValueChange(it)
+            },
+            text = "Reps"
+        )
     }
 }
 

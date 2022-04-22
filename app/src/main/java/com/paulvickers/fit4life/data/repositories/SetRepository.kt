@@ -21,6 +21,14 @@ class SetRepository @Inject constructor(private val setDao: SetDao) {
         setDao.updateSet(set)
     }
 
+    suspend fun updateWeightById(weight: Int, id: Int) {
+        setDao.updateWeightById(weight, id)
+    }
+
+    suspend fun updateRepsDisTimeById(repsDistTime: Int, id: Int) {
+        setDao.updateRepsDistTimeById(repsDistTime, id)
+    }
+
     suspend fun deleteSet(set: Set) {
         setDao.deleteSet(set)
     }

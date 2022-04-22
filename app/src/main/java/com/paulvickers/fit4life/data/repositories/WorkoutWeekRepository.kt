@@ -17,6 +17,10 @@ class WorkoutWeekRepository @Inject constructor(private val workoutWeekDao: Work
         workoutWeekDao.insertWorkoutWeek(workoutWeek)
     }
 
+    suspend fun insertWorkoutWeekList(workoutWeekList: List<WorkoutWeek>) {
+        workoutWeekDao.insertWorkoutWeekList(workoutWeekList)
+    }
+
     suspend fun updateWorkoutWeek(workoutWeek: WorkoutWeek) {
         workoutWeekDao.updateWorkoutWeek(workoutWeek)
     }
