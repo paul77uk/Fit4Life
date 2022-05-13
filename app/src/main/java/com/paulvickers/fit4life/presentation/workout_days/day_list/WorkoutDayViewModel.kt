@@ -56,17 +56,30 @@ class WorkoutDayViewModel @Inject constructor(
     private val _minDayId = MutableStateFlow(0)
     val minDayId: StateFlow<Int> = _minDayId
 
-    private var _openWeightDialog = mutableStateOf(false)
-    val openWeightDialog: State<Boolean> = _openWeightDialog
+
+    private var _repValue = mutableStateOf(TextFieldValue())
+    val repValue: State<TextFieldValue> = _repValue
 
     private var _weightValue = mutableStateOf(TextFieldValue())
     val weightValue: State<TextFieldValue> = _weightValue
 
+    private var _distanceValue = mutableStateOf(TextFieldValue())
+    val distanceValue: State<TextFieldValue> = _distanceValue
+
+    private var _timeValue = mutableStateOf(TextFieldValue())
+    val timeValue: State<TextFieldValue> = _timeValue
+
     private var _openRepDialog = mutableStateOf(false)
     val openRepDialog: State<Boolean> = _openRepDialog
 
-    private var _repValue = mutableStateOf(TextFieldValue())
-    val repValue: State<TextFieldValue> = _repValue
+    private var _openWeightDialog = mutableStateOf(false)
+    val openWeightDialog: State<Boolean> = _openWeightDialog
+
+    private var _openDistanceDialog = mutableStateOf(false)
+    val openDistanceDialog: State<Boolean> = _openDistanceDialog
+
+    private var _openTimeDialog = mutableStateOf(false)
+    val openTimeDialog: State<Boolean> = _openTimeDialog
 
     private var _setId = mutableStateOf(0)
     val setId: State<Int> = _setId
@@ -95,7 +108,6 @@ class WorkoutDayViewModel @Inject constructor(
     fun addSet(
         numberOfSets: Int,
         exerciseId: Int,
-        isRepsDistTime: Int,
         exerciseForSetsId: Int,
         dayId: Int
     ) {
@@ -105,10 +117,8 @@ class WorkoutDayViewModel @Inject constructor(
                     Set(
                         setNum = it + 1,
                         weight = 0,
-                        repsDistTime = 0,
                         exerciseId = exerciseId + 1,
                         isCompleted = 0,
-                        isRepsDistTime = isRepsDistTime,
                         exerciseForSetsId = exerciseForSetsId,
                         dayId = dayId
                     )
@@ -212,23 +222,21 @@ class WorkoutDayViewModel @Inject constructor(
         }
     }
 
-    fun updateSet(set: Set) {
-        viewModelScope.launch {
-            setRepository.updateSet(
-                Set(
-                    id = set.id,
-                    setNum = set.setNum,
-                    weight = set.weight,
-                    repsDistTime = set.repsDistTime,
-                    exerciseId = set.exerciseId,
-                    isCompleted = if (set.isCompleted == 1) 0 else 1,
-                    isRepsDistTime = set.isRepsDistTime,
-                    exerciseForSetsId = set.exerciseForSetsId,
-                    dayId = set.dayId
-                )
-            )
-        }
-    }
+//    fun updateSet(set: Set) {
+//        viewModelScope.launch {
+//            setRepository.updateSet(
+//                Set(
+//                    id = set.id,
+//                    setNum = set.setNum,
+//                    weight = set.weight,
+//                    exerciseId = set.exerciseId,
+//                    isCompleted = if (set.isCompleted == 1) 0 else 1,
+//                    exerciseForSetsId = set.exerciseForSetsId,
+//                    dayId = set.dayId
+//                )
+//            )
+//        }
+//    }
 
     fun updateWeightById(weight: Int) {
         viewModelScope.launch {
@@ -236,9 +244,27 @@ class WorkoutDayViewModel @Inject constructor(
         }
     }
 
-    fun updateRepsDistTimeById(repsDisTime: Int) {
+    fun updateRepsById(reps: Int) {
         viewModelScope.launch {
-            setRepository.updateRepsDisTimeById(repsDisTime, _setId.value)
+            setRepository.updateRepsById(reps, _setId.value)
+        }
+    }
+
+    fun updateDistanceById(distance: Int) {
+        viewModelScope.launch {
+            setRepository.updateDistanceById(distance, _setId.value)
+        }
+    }
+
+    fun updateTimeById(time: Double) {
+        viewModelScope.launch {
+            setRepository.updateTimeById(time, _setId.value)
+        }
+    }
+
+    fun updateIsCompletedById(isCompleted: Int) {
+        viewModelScope.launch {
+            setRepository.updateIsCompletedById(if (isCompleted == 1) 0 else 1, _setId.value)
         }
     }
 
@@ -249,10 +275,8 @@ class WorkoutDayViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = set.weight,
-                    repsDistTime = set.repsDistTime,
                     exerciseId = set.exerciseId,
                     isCompleted = if (set.isCompleted < set.setNum) set.isCompleted + 1 else set.isCompleted,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )
@@ -268,10 +292,8 @@ class WorkoutDayViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = weight ?: 0,
-                    repsDistTime = set.repsDistTime,
                     exerciseId = set.exerciseId,
                     isCompleted = set.isCompleted,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )
@@ -286,10 +308,8 @@ class WorkoutDayViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = set.weight,
-                    repsDistTime = reps ?: 0,
                     exerciseId = set.exerciseId,
                     isCompleted = set.isCompleted,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )
@@ -311,12 +331,28 @@ class WorkoutDayViewModel @Inject constructor(
         _openRepDialog.value = bool
     }
 
+    fun setOpenDistanceDialog(bool: Boolean) {
+        _openDistanceDialog.value = bool
+    }
+
+    fun setOpenTimeDialog(bool: Boolean) {
+        _openTimeDialog.value = bool
+    }
+
     fun onWeightValueChange(weightValue: String) {
         _weightValue.value = TextFieldValue(weightValue)
     }
 
     fun onRepValueChange(repValue: String) {
         _repValue.value = TextFieldValue(repValue)
+    }
+
+    fun onDistanceValueChange(distanceValue: String) {
+        _distanceValue.value = TextFieldValue(distanceValue)
+    }
+
+    fun onTimeValueChange(timeValue: String) {
+        _timeValue.value = TextFieldValue(timeValue)
     }
 
     fun setSetId(id: Int) {

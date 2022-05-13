@@ -56,15 +56,15 @@ fun WorkoutDayScreen(
     weekViewModel: WeekViewModel = hiltViewModel(),
     setViewModel: SetViewModel = hiltViewModel()
 ) {
-//    viewModel.getWeeks(workoutTitleId)
-//    val weeks by viewModel.weeks.collectAsState()
+    viewModel.getWeeks(workoutTitleId)
+    val weeks by viewModel.weeks.collectAsState()
+    val days by viewModel.days.collectAsState()
     val selectedWeek by viewModel.selectedWeek.collectAsState()
-    val exerciseTitles by viewModel.exerciseTitles.collectAsState()
+    val selectedDay by viewModel.selectedDay.collectAsState()
     val sets by viewModel.sets.collectAsState()
+    val exerciseTitles by viewModel.exerciseTitles.collectAsState()
     val minDayId by viewModel.minDayId.collectAsState()
 //    viewModel.getDays(selectedWeek)
-    val days by viewModel.days.collectAsState()
-    val selectedDay by viewModel.selectedDay.collectAsState()
     lateinit var day: WorkoutDay
     lateinit var sett: Set
     lateinit var exercise: ExerciseTitle
@@ -75,7 +75,6 @@ fun WorkoutDayScreen(
     var dropdownMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var selectedIndex by rememberSaveable { mutableStateOf(0) }
 
-//    viewModel.getExerciseTitles()
     var weekState by rememberSaveable { mutableStateOf("") }
 //    weekState = weeks.firstOrNull()?.week ?: ""
 //    var weekIdState by rememberSaveable { mutableStateOf(weeks.firstOrNull()?.id ?: 10) }
@@ -97,14 +96,59 @@ fun WorkoutDayScreen(
         topBar = {
             Column {
                 TopBarText(workoutTitleTitle)
-                WeekRow(workoutTitleId)
-                DayRow()
+                WeekRow(
+                    weeks = weeks,
+                    selectedWeek = selectedWeek,
+                    onClick = {
+                        viewModel.getDays()
+                    },
+                    setWeek = { viewModel.setSelectedWeek(it) }
+                )
+                DayRow(
+                    days = days,
+                    setDay = { viewModel.setSelectedDay(it) },
+                    selectedDay = selectedDay
+                )
             }
         },
+    ) { paddingValues ->
+        viewModel.getSets(selectedDay)
+        Column(
+            Modifier.padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ExerciseLazyColumn(
+                sets = sets,
+                exerciseTitles = exerciseTitles,
+                onWeightValueChange = { viewModel.onWeightValueChange(it) },
+                onRepValueChange = { viewModel.onRepValueChange(it) },
+                onDistanceValueChange = { viewModel.onDistanceValueChange(it) },
+                onTimeValueChange = { viewModel.onTimeValueChange(it) },
+                setSetId = { viewModel.setSetId(it) },
+                setOpenWeightDialog = { viewModel.setOpenWeightDialog(it) },
+                setOpenRepDialog = { viewModel.setOpenRepDialog(it) },
+                setOpenDistanceDialog = { viewModel.setOpenDistanceDialog(it) },
+                setOpenTimeDialog = { viewModel.setOpenTimeDialog(true) },
+                updateIsCompletedById = { viewModel.updateIsCompletedById(it) }
+            )
+            WeightDialog()
+            RepDialog()
+            DistanceDialog()
+            TimeDialog()
+        }
+    }
+//    Scaffold(
+//        topBar = {
+//            Column {
+//                TopBarText(workoutTitleTitle)
+//                WeekRow(workoutTitleId)
+//                DayRow()
+//            }
+//        },
 //        bottomBar = { F4LButton("Button")}
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            ExerciseLazyColumn()
+//    ) {
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            ExerciseLazyColumn()
 //            LazyColumn(
 //                modifier = Modifier
 ////                    .fillMaxSize()
@@ -215,8 +259,10 @@ fun WorkoutDayScreen(
 //                }
 //
 //            }
-            WeightDialog()
-            RepDialog()
+//            WeightDialog()
+//            RepDialog()
+//            DistanceDialog()
+//            TimeDialog()
 //            if (openWeightDialog) {
 //                F4LDialog(
 //                    dismiss = { openWeightDialog = false },
@@ -288,90 +334,104 @@ fun WorkoutDayScreen(
 //                    }
 //                )
 //            }
-        }
-    }
+//        }
+//    }
 }
+
+//@Composable
+//fun DayScreenScaffold(
+//    workoutTitleId: Int,
+//    workoutTitleTitle: String,
+//    viewModel: WorkoutDayViewModel = hiltViewModel(),
+//) {
+//    Scaffold(
+//        topBar = {
+//            Column {
+//                TopBarText(workoutTitleTitle)
+//                WeekRow(workoutTitleId)
+//                DayRow()
+//            }
+//        },
+//    ) {
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            ExerciseLazyColumn()
+//            WeightDialog()
+//            RepDialog()
+//            DistanceDialog()
+//            TimeDialog()
+//        }
+//    }
+//}
 
 @Composable
 fun WeekRow(
-    workoutTitleId: Int,
-    viewModel: WorkoutDayViewModel = hiltViewModel(),
+    setWeek: (Int) -> Unit,
+    weeks: List<WorkoutWeek>,
+    selectedWeek: Int,
+    onClick: () -> Unit
 ) {
-    viewModel.getWeeks(workoutTitleId)
-    val weeks by viewModel.weeks.collectAsState()
-    val selectedWeek by viewModel.selectedWeek.collectAsState()
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        weeks.forEach {
-            item {
-                F4LNavButton(
-                    selected = selectedWeek == it.id,
-                    onClick = {
-                        viewModel.setSelectedWeek(it.id ?: 0)
-                        viewModel.getDays()
-                    },
-                    text = it.week
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+        items(weeks) {
+            F4LNavButton(
+                selected = selectedWeek == it.id,
+                onClick = {
+                    setWeek(it.id ?: 0)
+                    onClick()
+                },
+                text = it.week
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
+//    }
 }
 
 @Composable
 fun DayRow(
-    viewModel: WorkoutDayViewModel = hiltViewModel(),
+    days: List<WorkoutDay>,
+    setDay: (Int) -> Unit,
+    selectedDay: Int
 ) {
-    val days by viewModel.days.collectAsState()
-    val selectedDay by viewModel.selectedDay.collectAsState()
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        days.forEach {
-            item {
-                F4LNavButton(
-                    selected = selectedDay == it.id,
-                    onClick = {
-                        viewModel.setSelectedDay(it.id ?: 0)
-                    },
-                    text = it.day
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-            }
+        items(days) {
+            F4LNavButton(
+                selected = selectedDay == it.id,
+                onClick = {
+                    setDay(it.id ?: 0)
+                },
+                text = it.day
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
 
 @Composable
 fun ExerciseLazyColumn(
-    viewModel: WorkoutDayViewModel = hiltViewModel(),
+//    viewModel: WorkoutDayViewModel = hiltViewModel(),
+    sets: List<Set>,
+    exerciseTitles: List<ExerciseTitle>,
+    onWeightValueChange: (String) -> Unit,
+    onRepValueChange: (String) -> Unit,
+    onDistanceValueChange: (String) -> Unit,
+    onTimeValueChange: (String) -> Unit,
+    setSetId: (Int) -> Unit,
+    setOpenWeightDialog: (Boolean) -> Unit,
+    setOpenRepDialog: (Boolean) -> Unit,
+    setOpenDistanceDialog: (Boolean) -> Unit,
+    setOpenTimeDialog: (Boolean) -> Unit,
+    updateIsCompletedById: (Int) -> Unit,
 ) {
-    val sets by viewModel.sets.collectAsState()
-    val selectedDay by viewModel.selectedDay.collectAsState()
-    val exerciseTitles by viewModel.exerciseTitles.collectAsState()
-    var weightState by rememberSaveable { mutableStateOf("") }
-    var repState by rememberSaveable { mutableStateOf("") }
-    var numOfSetsState by rememberSaveable { mutableStateOf("") }
-    lateinit var sett: Set
-    var openWeightDialog by rememberSaveable { mutableStateOf(false) }
-    var openRepDialog by rememberSaveable { mutableStateOf(false) }
-
     LazyColumn(
         modifier = Modifier
-//                    .fillMaxSize()
             .fillMaxWidth()
-//            .padding(it)
-//            .weight(0.8f)
     ) {
-
-//                viewModel.getSets()
-//                viewModel.getSets(1)
-
-        viewModel.getSets(selectedDay)
-
         val groupedItems = sets.groupBy { it.exerciseForSetsId }
 
         groupedItems.forEach { (exerciseForSetsId, set) ->
@@ -391,56 +451,72 @@ fun ExerciseLazyColumn(
             items(set) {
                 val isCircuit = exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 1
                 Column {
-                    Row(
+                    LazyRow(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        if (isCircuit)
+                        item {
+                            if (isCircuit)
+                                TextFieldBoxes(
+                                    text = "Exercise",
+                                    value = exerciseTitles[it.exerciseId - 1].title,
+                                    width = 100,
+                                )
+                            else {
+                                TextFieldBoxes(
+                                    text = "Set",
+                                    value = it.setNum.toString(),
+                                )
+                            }
                             TextFieldBoxes(
-                                text = "Exercise",
-                                value = exerciseTitles[it.exerciseId - 1].title,
-                                widthDivision = if (isCircuit) 4 else 5,
+                                text = "Weight",
+                                value = it.weight.toString(),
+                                onClick = {
+                                    onWeightValueChange(it.weight.toString())
+                                    setSetId(it.id ?: 0)
+                                    setOpenWeightDialog(true)
+                                },
                             )
-                        else {
                             TextFieldBoxes(
-                                text = "Set",
-                                value = it.setNum.toString(),
-                                widthDivision = if (isCircuit) 4 else 5
+                                text = "Reps",
+                                value = it.reps.toString(),
+                                onClick = {
+                                    onRepValueChange(it.reps.toString())
+                                    setSetId(it.id ?: 0)
+                                    setOpenRepDialog(true)
+                                },
+                            )
+                            TextFieldBoxes(
+                                text = "Dist",
+                                value = it.distance.toString(),
+                                onClick = {
+                                    onDistanceValueChange(it.distance.toString())
+                                    setSetId(it.id ?: 0)
+                                    setOpenDistanceDialog(true)
+                                },
+                            )
+                            TextFieldBoxes(
+                                text = "Time",
+                                value =
+                                if (it.time < 10.00) "0" + String.format("%.2f", it.time)
+                                else String.format("%.2f", it.time),
+                                onClick = {
+                                    onTimeValueChange(it.time.toString())
+                                    setSetId(it.id ?: 0)
+                                    setOpenTimeDialog(true)
+                                },
+                            )
+                            if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
+                                text = "",
+                                value = "",
+                                checkedState = it.isCompleted == 1,
+                                onCheckedChange = {
+                                    setSetId(it.id ?: 0)
+                                    updateIsCompletedById(it.isCompleted)
+                                },
+                                isChecked = true,
                             )
                         }
-                        TextFieldBoxes(
-                            text = "Weight",
-                            value = it.weight.toString(),
-                            onClick = {
-                                viewModel.onWeightValueChange(it.weight.toString())
-//                                weightState = it.weight.toString()
-                                viewModel.setSetId(it.id ?: 0)
-                                viewModel.setOpenWeightDialog(true)
-                            },
-                            widthDivision = if (isCircuit) 4 else 5
-                        )
-                        TextFieldBoxes(
-                            text = when (it.isRepsDistTime) {
-                                1 -> "Reps"
-                                2 -> "Distance"
-                                else -> "Time"
-                            },
-                            value = it.repsDistTime.toString(),
-                            onClick = {
-                                viewModel.onRepValueChange( it.repsDistTime.toString())
-                                viewModel.setSetId(it.id ?: 0)
-                                viewModel.setOpenRepDialog(true)
-                            },
-                            widthDivision = if (isCircuit) 4 else 5
-                        )
-                        if (exerciseTitles[it.exerciseForSetsId - 1].isCircuit == 0) TextFieldBoxes(
-                            text = "",
-                            value = "",
-                            checkedState = it.isCompleted == 1,
-                            onCheckedChange = { viewModel.updateSet(it) },
-                            isChecked = true,
-                            widthDivision = if (isCircuit) 4 else 5
-                        )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
@@ -486,8 +562,8 @@ fun WeightDialog(
                 if (weightValue.text.isNotBlank() && weightValue.text.isDigitsOnly())
                     viewModel.updateWeightById(weightValue.text.toInt())
             },
-            weightValue = weightValue.text,
-            onWeightValueChange = {
+            value = weightValue.text,
+            onValueChange = {
                 viewModel.onWeightValueChange(it)
             },
             text = "Weight"
@@ -507,11 +583,59 @@ fun RepDialog(
             save = {
                 viewModel.setOpenRepDialog(false)
                 if (repValue.text.isNotBlank() && repValue.text.isDigitsOnly())
-                    viewModel.updateRepsDistTimeById(repValue.text.toInt())
+                    viewModel.updateRepsById(repValue.text.toInt())
             },
-            weightValue = repValue.text,
-            onWeightValueChange = {
+            value = repValue.text,
+            onValueChange = {
                 viewModel.onRepValueChange(it)
+            },
+            text = "Reps"
+        )
+    }
+}
+
+@Composable
+fun DistanceDialog(
+    viewModel: WorkoutDayViewModel = hiltViewModel()
+) {
+    val openDistanceDialog by viewModel.openDistanceDialog
+    val distanceValue by viewModel.distanceValue
+    if (openDistanceDialog) {
+        F4LDialog(
+            dismiss = { viewModel.setOpenDistanceDialog(false) },
+            save = {
+                viewModel.setOpenDistanceDialog(false)
+                if (distanceValue.text.isNotBlank() && distanceValue.text.isDigitsOnly())
+                    viewModel.updateDistanceById(distanceValue.text.toInt())
+            },
+            value = distanceValue.text,
+            onValueChange = {
+                viewModel.onDistanceValueChange(it)
+            },
+            text = "Reps"
+        )
+    }
+}
+
+@Composable
+fun TimeDialog(
+    viewModel: WorkoutDayViewModel = hiltViewModel()
+) {
+    val openTimeDialog by viewModel.openTimeDialog
+    val timeValue by viewModel.timeValue
+    if (openTimeDialog) {
+        F4LDialog(
+            dismiss = { viewModel.setOpenTimeDialog(false) },
+            save = {
+                viewModel.setOpenTimeDialog(false)
+                if (timeValue.text.isNotBlank() && timeValue.text.substringBefore('.')
+                        .isDigitsOnly() && timeValue.text.substringAfter('.').isDigitsOnly()
+                )
+                    viewModel.updateTimeById(timeValue.text.toDouble())
+            },
+            value = timeValue.text,
+            onValueChange = {
+                viewModel.onTimeValueChange(it)
             },
             text = "Reps"
         )
@@ -522,8 +646,8 @@ fun RepDialog(
 fun F4LDialog(
     dismiss: () -> Unit,
     save: () -> Unit,
-    weightValue: String,
-    onWeightValueChange: (String) -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
     text: String
 ) {
     AlertDialog(
@@ -539,8 +663,8 @@ fun F4LDialog(
         title = { Text(text = "Update $text", color = F4LLightOrange) },
         text = {
             TextField(
-                value = weightValue,
-                onValueChange = { onWeightValueChange(it) },
+                value = value,
+                onValueChange = { onValueChange(it) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
@@ -760,10 +884,10 @@ fun TextFieldBoxes(
     onCheckedChange: () -> Unit = {},
     isChecked: Boolean = false,
     onClick: () -> Unit = {},
-    widthDivision: Int,
+    width: Int = 35,
 ) {
     Column(
-//        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -776,9 +900,10 @@ fun TextFieldBoxes(
                     ),
                     shape = RoundedCornerShape(25),
                 )
-                .padding(4.dp)
-                .height(48.dp)
-                .width(screenWidth / widthDivision)
+                .padding(8.dp)
+                .height(35.dp)
+//                .width(screenWidth / widthDivision)
+                .defaultMinSize(width.dp)
                 .clickable { onClick() },
             contentAlignment = Alignment.Center,
         ) {
@@ -786,6 +911,7 @@ fun TextFieldBoxes(
                 Checkbox(
                     checked = checkedState,
                     onCheckedChange = { onCheckedChange() },
+                    modifier = Modifier.size(35.dp),
                     colors = CheckboxDefaults.colors(uncheckedColor = F4LLightOrange)
                 )
             else
@@ -841,18 +967,10 @@ fun PrevCircuitLayout() {
 //    }
 //}
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WorkoutDayScreenPrev() {
-    BottomAppBar() {
-
-        BottomNavigationItem(
-            selected = true,
-            onClick = { /*TODO*/ },
-            icon = { Text(text = "DAY 1") },
-        )
-
-    }
+    WorkoutDayScreen(1, "F4LWorkout")
 }
 
 @Preview

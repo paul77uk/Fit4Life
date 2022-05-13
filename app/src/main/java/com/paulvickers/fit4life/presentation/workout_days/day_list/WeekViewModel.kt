@@ -128,10 +128,8 @@ class WeekViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = set.weight,
-                    repsDistTime = set.repsDistTime,
                     exerciseId = set.exerciseId,
                     isCompleted = if (set.isCompleted == 1) 0 else 1,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )
@@ -146,10 +144,8 @@ class WeekViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = weight ?: 0,
-                    repsDistTime = set.repsDistTime,
                     exerciseId = set.exerciseId,
                     isCompleted = set.isCompleted,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )
@@ -164,10 +160,8 @@ class WeekViewModel @Inject constructor(
                     id = set.id,
                     setNum = set.setNum,
                     weight = set.weight,
-                    repsDistTime = reps ?: 0,
                     exerciseId = set.exerciseId,
                     isCompleted = set.isCompleted,
-                    isRepsDistTime = set.isRepsDistTime,
                     exerciseForSetsId = set.exerciseForSetsId,
                     dayId = set.dayId
                 )

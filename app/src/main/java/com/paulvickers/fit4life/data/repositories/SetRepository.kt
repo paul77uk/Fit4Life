@@ -25,8 +25,20 @@ class SetRepository @Inject constructor(private val setDao: SetDao) {
         setDao.updateWeightById(weight, id)
     }
 
-    suspend fun updateRepsDisTimeById(repsDistTime: Int, id: Int) {
-        setDao.updateRepsDistTimeById(repsDistTime, id)
+    suspend fun updateRepsById(reps: Int, id: Int) {
+        setDao.updateRepsById(reps, id)
+    }
+
+    suspend fun updateDistanceById(distance: Int, id: Int) {
+        setDao.updateDistanceById(distance, id)
+    }
+
+    suspend fun updateTimeById(time: Double, id: Int) {
+        setDao.updateTimeById(time, id)
+    }
+
+    suspend fun updateIsCompletedById(isCompleted: Int, id: Int) {
+        setDao.updateIsCompletedById(isCompleted, id)
     }
 
     suspend fun deleteSet(set: Set) {

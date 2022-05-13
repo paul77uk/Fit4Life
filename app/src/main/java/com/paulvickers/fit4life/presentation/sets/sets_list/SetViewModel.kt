@@ -47,10 +47,8 @@ class SetViewModel @Inject constructor(
                     Set(
                         setNum = it + 1,
                         weight = 0,
-                        repsDistTime = 0,
                         exerciseId = exerciseId + 1,
                         isCompleted = 0,
-                        isRepsDistTime = isRepsDistTime,
                         exerciseForSetsId = exerciseForSetsId,
                         dayId = dayId
                     )

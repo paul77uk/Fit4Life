@@ -15,11 +15,12 @@ import androidx.room.PrimaryKey
 data class Set(
     @PrimaryKey() val id: Int? = null,
     val setNum: Int,
-    var weight: Int,
-    val repsDistTime: Int,
+    val weight: Int = 0,
+    val reps: Int = 0,
+    val distance: Int = 0,
     val exerciseId: Int,
+    val time: Double = 00.00,
     val isCompleted: Int,
-    val isRepsDistTime: Int = 1,
     val exerciseForSetsId: Int,
     val dayId: Int
 )

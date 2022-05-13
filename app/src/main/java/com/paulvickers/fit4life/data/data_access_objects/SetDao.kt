@@ -19,8 +19,17 @@ interface SetDao {
     @Query("UPDATE `Set` SET weight = :weight WHERE id == :id")
     suspend fun updateWeightById(weight: Int, id: Int)
 
-    @Query("UPDATE `Set` SET repsDistTime = :repsDistTime WHERE id == :id")
-    suspend fun updateRepsDistTimeById(repsDistTime: Int, id: Int)
+    @Query("UPDATE `Set` SET reps = :reps WHERE id == :id")
+    suspend fun updateRepsById(reps: Int, id: Int)
+
+    @Query("UPDATE `Set` SET distance = :distance WHERE id == :id")
+    suspend fun updateDistanceById(distance: Int, id: Int)
+
+    @Query("UPDATE `Set` SET time = :time WHERE id == :id")
+    suspend fun updateTimeById(time: Double, id: Int)
+
+    @Query("UPDATE `Set` SET isCompleted = :isCompleted WHERE id == :id")
+    suspend fun updateIsCompletedById(isCompleted: Int, id: Int)
 
     @Delete
     suspend fun deleteSet(set: Set)

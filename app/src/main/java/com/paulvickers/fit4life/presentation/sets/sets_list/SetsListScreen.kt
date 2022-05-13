@@ -105,7 +105,7 @@ fun SetsListScreen(
             items(sets) { setItem ->
                 var setNumState by rememberSaveable { mutableStateOf(setItem.setNum.toString()) }
                 var weightState by rememberSaveable { mutableStateOf(setItem.weight.toString()) }
-                var repState by rememberSaveable { mutableStateOf(setItem.repsDistTime.toString()) }
+                var repState by rememberSaveable { mutableStateOf(setItem.reps.toString()) }
 //                var textState by rememberSaveable { mutableStateOf(setItem.setTitle) }
                 var checkedState by rememberSaveable { mutableStateOf(setItem.isCompleted) }
 
