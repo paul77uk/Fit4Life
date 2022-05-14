@@ -36,7 +36,6 @@ import com.paulvickers.fit4life.data.models.ExerciseTitle
 import com.paulvickers.fit4life.data.models.Set
 import com.paulvickers.fit4life.data.models.WorkoutDay
 import com.paulvickers.fit4life.data.models.WorkoutWeek
-import com.paulvickers.fit4life.presentation.sets.sets_list.SetViewModel
 import com.paulvickers.fit4life.presentation.shared_components.F4LButton
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
 import com.paulvickers.fit4life.ui.theme.F4LBlack
@@ -53,8 +52,8 @@ fun WorkoutDayScreen(
     workoutTitleId: Int,
     workoutTitleTitle: String,
     viewModel: WorkoutDayViewModel = hiltViewModel(),
-    weekViewModel: WeekViewModel = hiltViewModel(),
-    setViewModel: SetViewModel = hiltViewModel()
+//    weekViewModel: WeekViewModel = hiltViewModel(),
+//    setViewModel: SetViewModel = hiltViewModel()
 ) {
     viewModel.getWeeks(workoutTitleId)
     val weeks by viewModel.weeks.collectAsState()
@@ -64,13 +63,19 @@ fun WorkoutDayScreen(
     val sets by viewModel.sets.collectAsState()
     val exerciseTitles by viewModel.exerciseTitles.collectAsState()
     val minDayId by viewModel.minDayId.collectAsState()
+    val openWeightDialog by viewModel.openWeightDialog
+    val openRepDialog by viewModel.openRepDialog
+    val openDistanceDialog by viewModel.openDistanceDialog
+    val openTimeDialog by viewModel.openTimeDialog
+    val weightValue by viewModel.weightValue
+    val repValue by viewModel.repValue
+    val distanceValue by viewModel.distanceValue
+    val timeValue by viewModel.timeValue
 //    viewModel.getDays(selectedWeek)
     lateinit var day: WorkoutDay
     lateinit var sett: Set
     lateinit var exercise: ExerciseTitle
     lateinit var week: WorkoutWeek
-    var openWeightDialog by rememberSaveable { mutableStateOf(false) }
-    var openRepDialog by rememberSaveable { mutableStateOf(false) }
     var openAddExerciseDialog by rememberSaveable { mutableStateOf(false) }
     var dropdownMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var selectedIndex by rememberSaveable { mutableStateOf(0) }
@@ -131,10 +136,59 @@ fun WorkoutDayScreen(
                 setOpenTimeDialog = { viewModel.setOpenTimeDialog(true) },
                 updateIsCompletedById = { viewModel.updateIsCompletedById(it) }
             )
-            WeightDialog()
-            RepDialog()
-            DistanceDialog()
-            TimeDialog()
+            if (openWeightDialog) {
+                ResultsDialog(
+                    dismiss = { viewModel.setOpenWeightDialog(false) },
+                    save = {
+                        viewModel.setOpenWeightDialog(false)
+                        if (weightValue.text.isNotBlank() && weightValue.text.isDigitsOnly())
+                            viewModel.updateWeightById(weightValue.text.toInt())
+                    },
+                    value = weightValue.text,
+                    onValueChange = { viewModel.onWeightValueChange(it) },
+                    text = "Weight"
+                )
+            }
+            if (openRepDialog) {
+                ResultsDialog(
+                    dismiss = { viewModel.setOpenRepDialog(false) },
+                    save = {
+                        viewModel.setOpenRepDialog(false)
+                        if (repValue.text.isNotBlank() && repValue.text.isDigitsOnly())
+                            viewModel.updateRepsById(repValue.text.toInt())
+                    },
+                    value = repValue.text,
+                    onValueChange = { viewModel.onRepValueChange(it) },
+                    text = "Reps"
+                )
+            }
+            if (openDistanceDialog) {
+                ResultsDialog(
+                    dismiss = { viewModel.setOpenDistanceDialog(false) },
+                    save = {
+                        viewModel.setOpenDistanceDialog(false)
+                        if (distanceValue.text.isNotBlank() && distanceValue.text.isDigitsOnly())
+                            viewModel.updateDistanceById(distanceValue.text.toInt())
+                    },
+                    value = distanceValue.text,
+                    onValueChange = { viewModel.onDistanceValueChange(it) },
+                    text = "Distance"
+                )
+            }
+            if (openTimeDialog) {
+                ResultsDialog(
+                    dismiss = { viewModel.setOpenTimeDialog(false) },
+                    save = {
+                        viewModel.setOpenTimeDialog(false)
+                        if (timeValue.text.isNotBlank() && timeValue.text.substringBefore('.')
+                                .isDigitsOnly() && timeValue.text.substringAfter('.').isDigitsOnly()
+                        ) viewModel.updateTimeById(timeValue.text.toDouble())
+                    },
+                    value = timeValue.text,
+                    onValueChange = { viewModel.onTimeValueChange(it) },
+                    text = "Time"
+                )
+            }
         }
     }
 //    Scaffold(
@@ -549,26 +603,21 @@ fun ExerciseLazyColumn(
 }
 
 @Composable
-fun WeightDialog(
-    viewModel: WorkoutDayViewModel = hiltViewModel()
+fun ResultsDialog(
+    dismiss: () -> Unit,
+    save: () -> Unit,
+    value: String,
+    onValueChange: (String) -> Unit,
+    text: String
 ) {
-    val openWeightDialog by viewModel.openWeightDialog
-    val weightValue by viewModel.weightValue
-    if (openWeightDialog) {
-        F4LDialog(
-            dismiss = { viewModel.setOpenWeightDialog(false) },
-            save = {
-                viewModel.setOpenWeightDialog(false)
-                if (weightValue.text.isNotBlank() && weightValue.text.isDigitsOnly())
-                    viewModel.updateWeightById(weightValue.text.toInt())
-            },
-            value = weightValue.text,
-            onValueChange = {
-                viewModel.onWeightValueChange(it)
-            },
-            text = "Weight"
-        )
-    }
+    F4LDialog(
+        dismiss = dismiss,
+        save = save,
+        value = value,
+        onValueChange = onValueChange,
+        text = text
+    )
+
 }
 
 @Composable
