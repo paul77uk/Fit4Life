@@ -2,6 +2,7 @@ package com.paulvickers.fit4life.presentation.workout_titles.add_edit_title
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -10,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.paulvickers.fit4life.presentation.destinations.WorkoutDayScreenDestination
+import com.paulvickers.fit4life.presentation.destinations.WorkoutTitleScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.F4LButton
 import com.paulvickers.fit4life.ui.theme.F4LLightOrange
 import com.ramcosta.composedestinations.annotation.Destination
@@ -37,12 +38,15 @@ fun AddTitleScreen(
     val scaffoldState = rememberScaffoldState()
     var textState by rememberSaveable { mutableStateOf(workoutTitleTitle) }
     var dayState by rememberSaveable { mutableStateOf("") }
+    var weekState by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
         scaffoldState = scaffoldState
-    ) {
+    ) { paddingValues ->
         Column(
-            Modifier.fillMaxWidth(),
+            Modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
@@ -59,30 +63,47 @@ fun AddTitleScreen(
 //                    .padding(16.dp),
                 singleLine = true
             )
-            OutlinedTextField(
-                value = dayState,
-                onValueChange = {
-                    dayState = it
-                },
-                textStyle = TextStyle(
-                    color = F4LLightOrange,
-                    fontSize = 18.sp
-                ),
-                label = { Text(text = "Number of days") },
-//                modifier = Modifier
-//                    .padding(16.dp),
-                singleLine = true
-            )
+//            OutlinedTextField(
+//                value = weekState,
+//                onValueChange = {
+//                    weekState = it
+//                },
+//                textStyle = TextStyle(
+//                    color = F4LLightOrange,
+//                    fontSize = 18.sp
+//                ),
+//                label = { Text(text = "Number of weeks") },
+////                modifier = Modifier
+////                    .padding(16.dp),
+//                singleLine = true
+//            )
+//            OutlinedTextField(
+//                value = dayState,
+//                onValueChange = {
+//                    dayState = it
+//                },
+//                textStyle = TextStyle(
+//                    color = F4LLightOrange,
+//                    fontSize = 18.sp
+//                ),
+//                label = { Text(text = "Number of days") },
+////                modifier = Modifier
+////                    .padding(16.dp),
+//                singleLine = true
+//            )
             F4LButton(
                 text = "Save",
                 onClick = {
-                    if (textState.isNotBlank() && dayState.isNotBlank()) {
+                    if (textState.isNotBlank()
+//                        && dayState.isNotBlank() && weekState.isNotBlank()
+                    ) {
                         viewModel.addWorkoutTitle(workoutTitleId, textState)
+//                        viewModel.addWorkoutWeeks(numOfDays = weekState.toInt())
 //                        viewModel.addWorkoutDays(dayState.toInt())
                         navigator.navigate(
-                            WorkoutDayScreenDestination(
-                                workoutTitleId,
-                                workoutTitleTitle
+                            WorkoutTitleScreenDestination(
+//                                workoutTitleId,
+//                                workoutTitleTitle
                             )
                         )
                     } else {

@@ -10,10 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -31,8 +28,10 @@ import com.paulvickers.fit4life.R
 import com.paulvickers.fit4life.data.models.WorkoutTitle
 import com.paulvickers.fit4life.presentation.destinations.WorkoutDayScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DestinationCard
+import com.paulvickers.fit4life.presentation.shared_components.DialogWindow
 import com.paulvickers.fit4life.presentation.shared_components.F4LButton
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
+import com.paulvickers.fit4life.presentation.workout_days.day_list.F4LDialog
 import com.paulvickers.fit4life.ui.theme.F4LBlack
 import com.paulvickers.fit4life.ui.theme.F4LDarkGrey
 import com.paulvickers.fit4life.ui.theme.F4LLightOrange
@@ -57,9 +56,10 @@ fun WorkoutTitleScreen(
     var numDaysState by rememberSaveable { mutableStateOf("") }
 
     Scaffold(
-        topBar = { WorkoutTitleTopAppBar(navigator) }
+        topBar = { WorkoutTitleTopAppBar(navigator) },
+        floatingActionButton = { WorkoutTitleFAB {} }
     ) {
-        WorkoutTitleLazyColumn {
+        WorkoutTitleLazyColumn(navigator = navigator) {
             WorkoutTitleCard(navigator, it)
         }
 
@@ -250,8 +250,13 @@ fun WorkoutTitleTopAppBar(navigator: DestinationsNavigator) {
 @Composable
 fun WorkoutTitleLazyColumn(
     viewModel: WorkoutTitleViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator,
     content: @Composable (WorkoutTitle) -> Unit
 ) {
+    var openDeleteDialog by remember { mutableStateOf(false) }
+    var openEditDialog by remember { mutableStateOf(false) }
+    var workoutTitleIndex by remember { mutableStateOf(0) }
+    var textState by remember { mutableStateOf("") }
     val allWorkoutTitles by viewModel.allWorkoutTitles.collectAsState()
     LazyColumn(
         Modifier
@@ -259,35 +264,89 @@ fun WorkoutTitleLazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally
 //                .weight(0.8f),
     ) {
-        items(allWorkoutTitles) {
-            content(it)
-//                DestinationCardWithIcons(
-//                    text = it.title,
-//                    textClicked = {
-//                        navigator.navigate(
-//                            WorkoutDayScreenDestination(
-//                                it.id ?: -1,
-//                                it.title
-//                            )
+        items(allWorkoutTitles) { it: WorkoutTitle ->
+//        content(it)
+            DestinationCardWithIcons(
+                text = it.title,
+                textClicked = {
+                    navigator.navigate(
+                        WorkoutDayScreenDestination(
+                            it.id ?: -1,
+                            it.title
+                        )
+                    )
+                },
+                editClicked = {
+//                    navigator.navigate(
+//                        AddTitleScreenDestination(
+//                            workoutTitleId = it.id ?: -1,
+//                            workoutTitleTitle = it.title
 //                        )
-//                    },
-//                    editClicked = {
-//                        navigator.navigate(
-//                            AddTitleScreenDestination(
-//                                workoutTitleId = it.id ?: -1,
-//                                workoutTitleTitle = it.title
-//                            )
-//                        )
-//                    },
-//                    deleteClicked = {
-//                        openDialog = true
-//                        workoutTitle = it
-//                    }
-//                )
-//            Spacer(modifier = Modifier.height(16.dp))
+//                    )
+                    textState = it.title
+                    workoutTitleIndex = it.id ?: 0
+                    openEditDialog = true
+                },
+                deleteClicked = {
+                    openDeleteDialog = true
+                    workoutTitleIndex = it.id ?: 0
+                }
+            )
+            if (openDeleteDialog)
+                DialogWindow(
+                    dismiss = { openDeleteDialog = false },
+                    delete = {
+                        viewModel.deleteWorkoutTitle(
+                            WorkoutTitle(
+                                id = workoutTitleIndex,
+                                allWorkoutTitles[workoutTitleIndex].title
+                            )
+                        )
+                        openDeleteDialog = false
+                    },
+                    titleToDelete = "Workout"
+                )
+            if (openEditDialog)
+                F4LDialog(
+                    dismiss = { openEditDialog = false },
+                    save = {
+                        viewModel.addWorkoutTitle(
+                            workoutTitleIndex,
+                            textState
+                        )
+                        openEditDialog = false
+                    },
+                    value = textState,
+                    onValueChange = { textState = it },
+                    text = "Workout",
+                    keyboardType = KeyboardType.Text
+                )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
+//onClick = {
+//    if (textState.isNotBlank()
+////                        && dayState.isNotBlank() && weekState.isNotBlank()
+//    ) {
+//        viewModel.addWorkoutTitle(workoutTitleId, textState)
+////                        viewModel.addWorkoutWeeks(numOfDays = weekState.toInt())
+////                        viewModel.addWorkoutDays(dayState.toInt())
+//        navigator.navigate(
+//            WorkoutTitleScreenDestination(
+////                                workoutTitleId,
+////                                workoutTitleTitle
+//            )
+//        )
+//    } else {
+//        scope.launch {
+//            scaffoldState.snackbarHostState.showSnackbar(
+//                "Fields cannot be empty", null, SnackbarDuration.Short
+//            )
+//        }
+//    }
+//}
 
 @Composable
 fun WorkoutTitleCard(
@@ -295,7 +354,8 @@ fun WorkoutTitleCard(
     workoutTitle: WorkoutTitle
 ) {
     Card(
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .padding(8.dp)
             .clickable {
                 navigator.navigate(
                     WorkoutDayScreenDestination(
@@ -324,11 +384,11 @@ fun AddWorkoutDialog(
     save: () -> Unit,
     titleValue: String,
     onTitleValueChange: (String) -> Unit,
-    numWeeksValue: String,
-    onNumWeeksValueChange: (String) -> Unit,
-    numDaysValue: String,
-    onNumDaysValueChange: (String) -> Unit,
-    text: String
+//    numWeeksValue: String,
+//    onNumWeeksValueChange: (String) -> Unit,
+//    numDaysValue: String,
+//    onNumDaysValueChange: (String) -> Unit,
+//    text: String
 ) {
     AlertDialog(
         onDismissRequest = dismiss,
@@ -342,50 +402,18 @@ fun AddWorkoutDialog(
         },
         title = {
             Text(
-                text = "Create Workout $text",
+                text = "Create Workout",
                 color = F4LLightOrange
             )
         },
         text = {
-            Column() {
+            Column {
                 TextField(
                     value = titleValue,
                     onValueChange = { onTitleValueChange(it) },
                     label = { Text(text = "Workout title") },
                     keyboardOptions = KeyboardOptions.Default.copy(
 //                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-//                    keyboardActions = KeyboardActions(
-//                        onNext = null
-//                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = F4LDarkGrey,
-                        textColor = F4LLightOrange
-                    )
-                )
-                TextField(
-                    value = numWeeksValue,
-                    onValueChange = { onNumWeeksValueChange(it) },
-                    label = { Text(text = "Number of weeks") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-//                    keyboardActions = KeyboardActions(
-//                        onDone = { save() }
-//                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = F4LDarkGrey,
-                        textColor = F4LLightOrange
-                    )
-                )
-                TextField(
-                    value = numDaysValue,
-                    onValueChange = { onNumDaysValueChange(it) },
-                    label = { Text(text = "Number of days a week") },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
@@ -396,6 +424,38 @@ fun AddWorkoutDialog(
                         textColor = F4LLightOrange
                     )
                 )
+//                TextField(
+//                    value = numWeeksValue,
+//                    onValueChange = { onNumWeeksValueChange(it) },
+//                    label = { Text(text = "Number of weeks") },
+//                    keyboardOptions = KeyboardOptions.Default.copy(
+//                        keyboardType = KeyboardType.Number,
+//                        imeAction = ImeAction.Next
+//                    ),
+////                    keyboardActions = KeyboardActions(
+////                        onDone = { save() }
+////                    ),
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        backgroundColor = F4LDarkGrey,
+//                        textColor = F4LLightOrange
+//                    )
+//                )
+//                TextField(
+//                    value = numDaysValue,
+//                    onValueChange = { onNumDaysValueChange(it) },
+//                    label = { Text(text = "Number of days a week") },
+//                    keyboardOptions = KeyboardOptions.Default.copy(
+//                        keyboardType = KeyboardType.Number,
+//                        imeAction = ImeAction.Done
+//                    ),
+//                    keyboardActions = KeyboardActions(
+//                        onDone = { save() }
+//                    ),
+//                    colors = TextFieldDefaults.textFieldColors(
+//                        backgroundColor = F4LDarkGrey,
+//                        textColor = F4LLightOrange
+//                    )
+//                )
             }
         },
         shape = RoundedCornerShape(12)
@@ -408,7 +468,8 @@ fun DestinationCardWithIcons(
     textClicked: () -> Unit = {},
     editClicked: () -> Unit = {},
     deleteClicked: () -> Unit = {},
-) {
+
+    ) {
     DestinationCard(
         text = text,
         clickable = textClicked,
@@ -429,6 +490,13 @@ fun DestinationCardWithIcons(
             )
         }
     )
+}
+
+@Composable
+fun WorkoutTitleFAB(onClick: () -> Unit) {
+    FloatingActionButton(onClick = onClick) {
+        Icon(imageVector = Icons.Default.Add, contentDescription = null)
+    }
 }
 
 @Preview

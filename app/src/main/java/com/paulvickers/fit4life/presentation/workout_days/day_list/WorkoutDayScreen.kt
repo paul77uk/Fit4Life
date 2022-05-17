@@ -119,7 +119,7 @@ fun WorkoutDayScreen(
     ) { paddingValues ->
         viewModel.getSets(selectedDay)
         Column(
-            Modifier.padding(paddingValues),
+            Modifier.padding(paddingValues.calculateBottomPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ExerciseLazyColumn(
@@ -137,7 +137,7 @@ fun WorkoutDayScreen(
                 updateIsCompletedById = { viewModel.updateIsCompletedById(it) }
             )
             if (openWeightDialog) {
-                ResultsDialog(
+                F4LDialog(
                     dismiss = { viewModel.setOpenWeightDialog(false) },
                     save = {
                         viewModel.setOpenWeightDialog(false)
@@ -146,11 +146,12 @@ fun WorkoutDayScreen(
                     },
                     value = weightValue.text,
                     onValueChange = { viewModel.onWeightValueChange(it) },
-                    text = "Weight"
+                    text = "Weight",
+                    keyboardType = KeyboardType.Number
                 )
             }
             if (openRepDialog) {
-                ResultsDialog(
+                F4LDialog(
                     dismiss = { viewModel.setOpenRepDialog(false) },
                     save = {
                         viewModel.setOpenRepDialog(false)
@@ -159,11 +160,12 @@ fun WorkoutDayScreen(
                     },
                     value = repValue.text,
                     onValueChange = { viewModel.onRepValueChange(it) },
-                    text = "Reps"
+                    text = "Reps",
+                    keyboardType = KeyboardType.Number
                 )
             }
             if (openDistanceDialog) {
-                ResultsDialog(
+                F4LDialog(
                     dismiss = { viewModel.setOpenDistanceDialog(false) },
                     save = {
                         viewModel.setOpenDistanceDialog(false)
@@ -172,11 +174,12 @@ fun WorkoutDayScreen(
                     },
                     value = distanceValue.text,
                     onValueChange = { viewModel.onDistanceValueChange(it) },
-                    text = "Distance"
+                    text = "Distance",
+                    keyboardType = KeyboardType.Number
                 )
             }
             if (openTimeDialog) {
-                ResultsDialog(
+                F4LDialog(
                     dismiss = { viewModel.setOpenTimeDialog(false) },
                     save = {
                         viewModel.setOpenTimeDialog(false)
@@ -186,7 +189,8 @@ fun WorkoutDayScreen(
                     },
                     value = timeValue.text,
                     onValueChange = { viewModel.onTimeValueChange(it) },
-                    text = "Time"
+                    text = "Time",
+                    keyboardType = KeyboardType.Number
                 )
             }
         }
@@ -603,24 +607,6 @@ fun ExerciseLazyColumn(
 }
 
 @Composable
-fun ResultsDialog(
-    dismiss: () -> Unit,
-    save: () -> Unit,
-    value: String,
-    onValueChange: (String) -> Unit,
-    text: String
-) {
-    F4LDialog(
-        dismiss = dismiss,
-        save = save,
-        value = value,
-        onValueChange = onValueChange,
-        text = text
-    )
-
-}
-
-@Composable
 fun RepDialog(
     viewModel: WorkoutDayViewModel = hiltViewModel()
 ) {
@@ -638,7 +624,8 @@ fun RepDialog(
             onValueChange = {
                 viewModel.onRepValueChange(it)
             },
-            text = "Reps"
+            text = "Reps",
+            keyboardType = KeyboardType.Number
         )
     }
 }
@@ -661,7 +648,8 @@ fun DistanceDialog(
             onValueChange = {
                 viewModel.onDistanceValueChange(it)
             },
-            text = "Reps"
+            text = "Reps",
+            keyboardType = KeyboardType.Number
         )
     }
 }
@@ -686,7 +674,8 @@ fun TimeDialog(
             onValueChange = {
                 viewModel.onTimeValueChange(it)
             },
-            text = "Reps"
+            text = "Reps",
+            keyboardType = KeyboardType.Number
         )
     }
 }
@@ -697,7 +686,8 @@ fun F4LDialog(
     save: () -> Unit,
     value: String,
     onValueChange: (String) -> Unit,
-    text: String
+    text: String,
+    keyboardType: KeyboardType
 ) {
     AlertDialog(
         onDismissRequest = dismiss,
@@ -715,7 +705,7 @@ fun F4LDialog(
                 value = value,
                 onValueChange = { onValueChange(it) },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
+                    keyboardType = keyboardType,
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(

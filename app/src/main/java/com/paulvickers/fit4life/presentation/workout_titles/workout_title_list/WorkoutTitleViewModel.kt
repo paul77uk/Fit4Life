@@ -76,7 +76,7 @@ class WorkoutTitleViewModel @Inject constructor(
     fun getMaxWeekId() {
 //        getWorkoutWeeks()
         viewModelScope.launch {
-             weekRepository.getMaxWeekId.collect {
+            weekRepository.getMaxWeekId.collect {
 //                 if (it == 0) _maxWeekId.value = 1
                 _maxWeekId.value = it
             }
@@ -121,6 +121,26 @@ class WorkoutTitleViewModel @Inject constructor(
         }
 
 
+    }
+
+    fun addWorkoutTitle(workoutTitleId: Int, workoutTitleTitle: String) {
+        viewModelScope.launch {
+            if (workoutTitleId == -1) {
+                workoutTitleRepository.insertWorkoutTitle(
+                    WorkoutTitle(
+                        title = workoutTitleTitle
+                    )
+                )
+            } else {
+                workoutTitleRepository.updateWorkoutTitle(
+                    WorkoutTitle(
+                        id = workoutTitleId,
+                        title = workoutTitleTitle
+                    )
+                )
+            }
+
+        }
     }
 
 }

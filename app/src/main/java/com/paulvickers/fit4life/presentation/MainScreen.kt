@@ -15,13 +15,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.paulvickers.fit4life.R
+import com.paulvickers.fit4life.presentation.destinations.AddTitleScreenDestination
 import com.paulvickers.fit4life.presentation.destinations.WorkoutTitleScreenDestination
 import com.paulvickers.fit4life.presentation.shared_components.DestinationCard
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
 import com.paulvickers.fit4life.presentation.workout_days.day_list.WorkoutDayViewModel
 import com.paulvickers.fit4life.presentation.workout_titles.workout_title_list.WorkoutTitleViewModel
 import com.paulvickers.fit4life.ui.theme.F4LLightGrey
-import com.paulvickers.fit4life.ui.theme.Fit4LifeTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -29,16 +29,21 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination(start = true)
 fun MainScreen(
     navigator: DestinationsNavigator,
-    viewModel: WorkoutTitleViewModel = hiltViewModel(),
-dayViewModel: WorkoutDayViewModel = hiltViewModel()
+//    viewModel: WorkoutTitleViewModel = hiltViewModel(),
+//dayViewModel: WorkoutDayViewModel = hiltViewModel()
 ) {
-    MainScreenScaffold { navigator.navigate(WorkoutTitleScreenDestination()) }
-    viewModel.getWorkoutTitles()
+    MainScreenScaffold(navigator)
+//    { navigator.navigate(WorkoutTitleScreenDestination()) }
+//    viewModel.getWorkoutTitles()
 //    dayViewModel.getExerciseForSet()
 }
 
 @Composable
-private fun MainScreenScaffold(clickable: () -> Unit) {
+private fun MainScreenScaffold(
+    navigator: DestinationsNavigator,
+    viewModel: WorkoutTitleViewModel = hiltViewModel(),
+    workoutDayViewModel: WorkoutDayViewModel = hiltViewModel()
+) {
     Scaffold(
         topBar = { TopBarText("FIT 4 LIFE") },
     ) {
@@ -46,10 +51,14 @@ private fun MainScreenScaffold(clickable: () -> Unit) {
             LazyColumn(
                 Modifier.padding(it),
             ) {
-                item() {
+                item {
                     DestinationCard(
                         text = "Workouts",
-                        clickable = clickable
+                        clickable = {
+                            navigator.navigate(WorkoutTitleScreenDestination())
+//                            viewModel.getWorkoutTitles()
+//                            workoutDayViewModel.getDays()
+                        }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     DestinationCard(
@@ -74,7 +83,7 @@ private fun MainScreenScaffold(clickable: () -> Unit) {
                     Spacer(modifier = Modifier.height(16.dp))
                     DestinationCard(
                         text = "Create New Workout",
-                        clickable = { }
+                        clickable = { navigator.navigate(AddTitleScreenDestination("", -1)) }
                     )
                 }
             }
@@ -107,7 +116,7 @@ fun LogoImage() {
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun TopBarTextPrev() {
-        TopBarText("FIT 4 LIFE")
+    TopBarText("FIT 4 LIFE")
 }
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
@@ -122,10 +131,10 @@ fun ImagePrev() {
     LogoImage()
 }
 
-@Preview()
-@Composable()
-fun MainScreenPrev() {
-    Fit4LifeTheme() {
-        MainScreenScaffold {}
-    }
-}
+//@Preview()
+//@Composable()
+//fun MainScreenPrev() {
+//    Fit4LifeTheme {
+//        MainScreenScaffold {}
+//    }
+//}

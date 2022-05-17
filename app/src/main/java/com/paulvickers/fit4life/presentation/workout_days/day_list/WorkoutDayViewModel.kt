@@ -140,7 +140,7 @@ class WorkoutDayViewModel @Inject constructor(
             workoutWeekRepository.getWeeksByWorkoutTitleId(workoutTitleId).collect {
                 _weeks.value = it
                 if (firstWeek) {
-                    _selectedWeek.value = it.first().id ?: 0
+                    _selectedWeek.value = if (it.isEmpty()) 0 else it.first().id ?: 0
                     firstWeek = false
                 }
 //                else {
@@ -160,7 +160,7 @@ class WorkoutDayViewModel @Inject constructor(
             workoutDayRepository.getDaysByWorkoutWeekId(selectedWeek.value).collect {
                 _days.value = it
                 if (firstDay) {
-                    _selectedDay.value = it.first().id ?: 0
+                    _selectedDay.value = if (it.isEmpty()) 0 else it.first().id ?: 0
 //                    firstDay = false
                 }
             }
@@ -318,9 +318,10 @@ class WorkoutDayViewModel @Inject constructor(
     }
 
     fun isLastDay() {
-        if (days.value.last().id == dayId.value) {}// showButton
-            // if button clicked to reset checkboxes
-                // reset all checkboxes by workoutId
+        if (days.value.last().id == dayId.value) {
+        }// showButton
+        // if button clicked to reset checkboxes
+        // reset all checkboxes by workoutId
     }
 
     fun setOpenWeightDialog(bool: Boolean) {
