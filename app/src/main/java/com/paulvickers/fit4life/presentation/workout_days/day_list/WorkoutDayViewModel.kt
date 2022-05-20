@@ -360,4 +360,21 @@ class WorkoutDayViewModel @Inject constructor(
         _setId.value = id
     }
 
+    fun addWeek(week: String, workoutTitleId: Int) {
+        viewModelScope.launch {
+            workoutWeekRepository.insertWorkoutWeek(
+                WorkoutWeek(
+                    week = week,
+                    workoutTitleId = workoutTitleId
+                )
+            )
+        }
+    }
+
+    fun deleteWeek(week: WorkoutWeek) {
+        viewModelScope.launch {
+            workoutWeekRepository.deleteWorkoutWeek(week)
+        }
+    }
+
 }

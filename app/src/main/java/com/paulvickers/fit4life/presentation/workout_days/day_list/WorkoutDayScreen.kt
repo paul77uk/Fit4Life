@@ -1,9 +1,11 @@
 package com.paulvickers.fit4life.presentation.workout_days.day_list
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,13 +15,17 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -37,6 +43,7 @@ import com.paulvickers.fit4life.data.models.Set
 import com.paulvickers.fit4life.data.models.WorkoutDay
 import com.paulvickers.fit4life.data.models.WorkoutWeek
 import com.paulvickers.fit4life.presentation.shared_components.F4LButton
+import com.paulvickers.fit4life.presentation.shared_components.F4LEditDialog
 import com.paulvickers.fit4life.presentation.shared_components.TopBarText
 import com.paulvickers.fit4life.ui.theme.F4LBlack
 import com.paulvickers.fit4life.ui.theme.F4LDarkGrey
@@ -107,7 +114,8 @@ fun WorkoutDayScreen(
                     onClick = {
                         viewModel.getDays()
                     },
-                    setWeek = { viewModel.setSelectedWeek(it) }
+                    setWeek = { viewModel.setSelectedWeek(it) },
+                    onDoubleTap = { viewModel.deleteWeek(it) }
                 )
                 DayRow(
                     days = days,
@@ -116,10 +124,17 @@ fun WorkoutDayScreen(
                 )
             }
         },
+        bottomBar = {
+            BottomAppBarRow(
+                onWeekClick = { viewModel.addWeek("Week 1", workoutTitleId) },
+                onDayClick = {},
+                onSetClick = {}
+            )
+        }
     ) { paddingValues ->
         viewModel.getSets(selectedDay)
         Column(
-            Modifier.padding(paddingValues.calculateBottomPadding()),
+            Modifier.padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ExerciseLazyColumn(
@@ -137,7 +152,7 @@ fun WorkoutDayScreen(
                 updateIsCompletedById = { viewModel.updateIsCompletedById(it) }
             )
             if (openWeightDialog) {
-                F4LDialog(
+                F4LEditDialog(
                     dismiss = { viewModel.setOpenWeightDialog(false) },
                     save = {
                         viewModel.setOpenWeightDialog(false)
@@ -151,7 +166,7 @@ fun WorkoutDayScreen(
                 )
             }
             if (openRepDialog) {
-                F4LDialog(
+                F4LEditDialog(
                     dismiss = { viewModel.setOpenRepDialog(false) },
                     save = {
                         viewModel.setOpenRepDialog(false)
@@ -165,7 +180,7 @@ fun WorkoutDayScreen(
                 )
             }
             if (openDistanceDialog) {
-                F4LDialog(
+                F4LEditDialog(
                     dismiss = { viewModel.setOpenDistanceDialog(false) },
                     save = {
                         viewModel.setOpenDistanceDialog(false)
@@ -179,7 +194,7 @@ fun WorkoutDayScreen(
                 )
             }
             if (openTimeDialog) {
-                F4LDialog(
+                F4LEditDialog(
                     dismiss = { viewModel.setOpenTimeDialog(false) },
                     save = {
                         viewModel.setOpenTimeDialog(false)
@@ -426,20 +441,29 @@ fun WeekRow(
     setWeek: (Int) -> Unit,
     weeks: List<WorkoutWeek>,
     selectedWeek: Int,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDoubleTap: (WorkoutWeek) -> Unit = {}
 ) {
+    val mContext = LocalContext.current
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(PaddingValues(8.dp)),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(weeks) {
+        items(weeks) { workoutWeek ->
             F4LNavButton(
-                selected = selectedWeek == it.id,
+                selected = selectedWeek == workoutWeek.id,
                 onClick = {
-                    setWeek(it.id ?: 0)
+                    setWeek(workoutWeek.id ?: 0)
                     onClick()
                 },
-                text = it.week
+                text = workoutWeek.week,
+                onDoubleTap = {
+                    Toast.makeText(mContext, "Double Tap Detected", Toast.LENGTH_SHORT)
+                        .show()
+                    onDoubleTap(workoutWeek)
+                },
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
@@ -454,7 +478,9 @@ fun DayRow(
     selectedDay: Int
 ) {
     LazyRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(PaddingValues(8.dp)),
         horizontalArrangement = Arrangement.Center
     ) {
         items(days) {
@@ -588,7 +614,7 @@ fun ExerciseLazyColumn(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             F4LButton(
-                                "${set.last().setNum} Rounds",
+                                text = "${set.last().setNum} Rounds",
 //                                onClick = {
 //                                    viewModel.updateRound(set.last())
 //                                }
@@ -604,121 +630,6 @@ fun ExerciseLazyColumn(
         }
 
     }
-}
-
-@Composable
-fun RepDialog(
-    viewModel: WorkoutDayViewModel = hiltViewModel()
-) {
-    val openRepDialog by viewModel.openRepDialog
-    val repValue by viewModel.repValue
-    if (openRepDialog) {
-        F4LDialog(
-            dismiss = { viewModel.setOpenRepDialog(false) },
-            save = {
-                viewModel.setOpenRepDialog(false)
-                if (repValue.text.isNotBlank() && repValue.text.isDigitsOnly())
-                    viewModel.updateRepsById(repValue.text.toInt())
-            },
-            value = repValue.text,
-            onValueChange = {
-                viewModel.onRepValueChange(it)
-            },
-            text = "Reps",
-            keyboardType = KeyboardType.Number
-        )
-    }
-}
-
-@Composable
-fun DistanceDialog(
-    viewModel: WorkoutDayViewModel = hiltViewModel()
-) {
-    val openDistanceDialog by viewModel.openDistanceDialog
-    val distanceValue by viewModel.distanceValue
-    if (openDistanceDialog) {
-        F4LDialog(
-            dismiss = { viewModel.setOpenDistanceDialog(false) },
-            save = {
-                viewModel.setOpenDistanceDialog(false)
-                if (distanceValue.text.isNotBlank() && distanceValue.text.isDigitsOnly())
-                    viewModel.updateDistanceById(distanceValue.text.toInt())
-            },
-            value = distanceValue.text,
-            onValueChange = {
-                viewModel.onDistanceValueChange(it)
-            },
-            text = "Reps",
-            keyboardType = KeyboardType.Number
-        )
-    }
-}
-
-@Composable
-fun TimeDialog(
-    viewModel: WorkoutDayViewModel = hiltViewModel()
-) {
-    val openTimeDialog by viewModel.openTimeDialog
-    val timeValue by viewModel.timeValue
-    if (openTimeDialog) {
-        F4LDialog(
-            dismiss = { viewModel.setOpenTimeDialog(false) },
-            save = {
-                viewModel.setOpenTimeDialog(false)
-                if (timeValue.text.isNotBlank() && timeValue.text.substringBefore('.')
-                        .isDigitsOnly() && timeValue.text.substringAfter('.').isDigitsOnly()
-                )
-                    viewModel.updateTimeById(timeValue.text.toDouble())
-            },
-            value = timeValue.text,
-            onValueChange = {
-                viewModel.onTimeValueChange(it)
-            },
-            text = "Reps",
-            keyboardType = KeyboardType.Number
-        )
-    }
-}
-
-@Composable
-fun F4LDialog(
-    dismiss: () -> Unit,
-    save: () -> Unit,
-    value: String,
-    onValueChange: (String) -> Unit,
-    text: String,
-    keyboardType: KeyboardType
-) {
-    AlertDialog(
-        onDismissRequest = dismiss,
-        confirmButton = {
-            TextButton(onClick = save)
-            { Text(text = "Save") }
-        },
-        dismissButton = {
-            TextButton(onClick = dismiss)
-            { Text(text = "Cancel") }
-        },
-        title = { Text(text = "Update $text", color = F4LLightOrange) },
-        text = {
-            TextField(
-                value = value,
-                onValueChange = { onValueChange(it) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = keyboardType,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { save() }
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = F4LDarkGrey,
-                    textColor = F4LLightOrange
-                )
-            )
-        },
-        shape = RoundedCornerShape(12)
-    )
 }
 
 @Composable
@@ -893,22 +804,33 @@ fun MyDropdownMenuLayout(
 }
 
 @Composable
-fun F4LNavButton(selected: Boolean, onClick: () -> Unit, text: String) {
-
-    OutlinedButton(
-        onClick = onClick,
-        modifier = Modifier.padding(5.dp),
-//        elevation = ButtonDefaults.elevation(5.dp),
-        border = BorderStroke(
-            1.dp,
-            F4LLightOrange
-        ),
-        colors = ButtonDefaults.outlinedButtonColors(
-            backgroundColor = if (selected) F4LLightOrange else F4LBlack
-        ),
-        shape = RoundedCornerShape(25),
+fun F4LNavButton(
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    onClick: () -> Unit,
+    onDoubleTap: () -> Unit = {},
+    text: String
+) {
+    Box(
+        modifier = modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = { /* Called when the gesture starts */ },
+                    onDoubleTap = { onDoubleTap() },
+                    onLongPress = { },
+                    onTap = { onClick() }
+                )
+            }
+            .clip(shape = RoundedCornerShape(25))
+            .background(if (selected) F4LLightOrange else F4LBlack)
+            .border(
+                border = BorderStroke(1.dp, F4LLightOrange),
+                shape = RoundedCornerShape(25)
+            )
+            .padding(5.dp)
     ) {
         Text(
+            modifier = Modifier.padding(5.dp),
             text = text,
             color = if (selected) F4LBlack else F4LLightOrange
         )
@@ -987,6 +909,56 @@ fun CircuitLayout() {
 
 }
 
+@Composable
+fun BottomAppBarRow(
+    onWeekClick: () -> Unit,
+    onDayClick: () -> Unit,
+    onSetClick: () -> Unit,
+) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        F4LButton(
+            rightIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
+            },
+            text = "Week",
+            onClick = onWeekClick,
+//            modifier = Modifier.pointerInput(Unit) {
+//                detectTapGestures(
+//                    onDoubleTap = { onWeekDoubleTap() }
+//                )
+//            }
+        )
+        F4LButton(
+            rightIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
+            },
+            text = "Day",
+            onClick = {}
+        )
+        F4LButton(
+            rightIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
+            },
+            text = "Set",
+            onClick = {}
+        )
+    }
+}
+
+/*TODO:
+   Hoist onClicks, add num of weeks, num of days, and add sets to current day,
+   weekly option for days and sets
+   long click on weeks, days, sets to edit, double click to delete*/
+
 @Preview
 @Composable
 fun PrevCircuitLayout() {
@@ -1022,5 +994,33 @@ fun CircuitCheckboxPrev() {
         ) {
             RoundCount(0, 5)
         }
+    }
+}
+
+@Preview
+@Composable
+fun ButtonPrev() {
+    F4LButton(
+        leftIcon = { Icon(imageVector = Icons.Default.Add, contentDescription = null) },
+        text = "Week"
+    )
+}
+
+@Preview
+@Composable
+fun BottomAppBarRowPrev() {
+    BottomAppBarRow(
+        onWeekClick = {},
+        onDayClick = {},
+        onSetClick = {}
+    )
+}
+
+@Preview
+@Composable
+fun F4LNavButtonPrev() {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        F4LNavButton(selected = true, onClick = { /*TODO*/ }, text = "Week 1")
+        F4LNavButton(selected = false, onClick = { /*TODO*/ }, text = "Week 2")
     }
 }

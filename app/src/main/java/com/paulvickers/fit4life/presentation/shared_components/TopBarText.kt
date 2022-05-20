@@ -16,7 +16,10 @@ import com.paulvickers.fit4life.ui.theme.bungeeInlineFamily
 @Composable
 fun TopBarText(text: String) {
     Text(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .padding(8.dp),
         text = text,
         color = F4LLightOrange,
         fontSize = 30.sp,

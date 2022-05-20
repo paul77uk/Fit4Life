@@ -16,26 +16,27 @@ import com.paulvickers.fit4life.ui.theme.F4LLightOrange
 
 @Composable
 fun F4LButton(
+    modifier: Modifier = Modifier,
     text: String = "",
     onClick: () -> Unit = {},
     leftIcon: @Composable () -> Unit = {},
     rightIcon: @Composable () -> Unit = {}
 ) {
-        OutlinedButton(
-            onClick = onClick,
-            modifier = Modifier.padding(5.dp),
-            elevation = ButtonDefaults.elevation(5.dp),
-            border = BorderStroke(1.dp, F4LLightOrange),
-            shape = RoundedCornerShape(25),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = F4LLightOrange,
-                backgroundColor = F4LBlack
-            ),
-        ) {
-            leftIcon()
-            Text(text = text, fontSize = 18.sp)
-            rightIcon()
-        }
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.padding(5.dp),
+        elevation = ButtonDefaults.elevation(5.dp),
+        border = BorderStroke(1.dp, F4LLightOrange),
+        shape = RoundedCornerShape(25),
+        colors = ButtonDefaults.outlinedButtonColors(
+            contentColor = F4LLightOrange,
+            backgroundColor = F4LBlack
+        ),
+    ) {
+        leftIcon()
+        Text(text = text, fontSize = 18.sp)
+        rightIcon()
+    }
 }
 
 @Preview
